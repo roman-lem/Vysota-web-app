@@ -1,0 +1,88 @@
+<script setup>
+
+import { computed, defineProps, ref } from 'vue';
+import { useRouter } from 'vue-router';
+
+
+const {students, removeStudent, filter} = defineProps({
+    students: {
+        type: Array,
+        default: ref([])
+    },
+    removeStudent: {
+        type: Function
+    },
+    filter: {
+        type: String
+    }
+})
+
+const router = useRouter()
+
+function showStudent(id) {
+    router.push(`/students/${id}`)
+}
+
+
+const matchFilter = computed(() => {
+    return students.filter((student) => {return filter === '' || student['name'].includes(filter)})
+})
+
+
+
+</script>
+
+<template>
+    <div class="table-wrapper">
+        <table class="table">
+            <tr class="headers">
+                <th>Имя</th>
+                <th>Дата рождения</th>
+                <th>Возраст</th>
+                <th>Разряд</th>
+            </tr>
+            <tbody>
+                <tr v-for="student in matchFilter" :key="student['id']" @click="showStudent(student['id'])">
+                    <td>{{student['name']}}</td>
+                    <td>{{student['birth_date']}}</td>
+                    <td>{{student['age']}}</td>
+                    <td>{{student['level']}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</template>
+<style scoped>
+    .table-wrapper {
+        width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        font-family: "Manrope", sans-serif;
+        color: var(--text-color);
+        font-size: 20px;
+        font-weight: normal;
+        border-radius: 10px;
+        max-height: 60vh;
+        overflow-y: scroll;
+        scrollbar-width: 5px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        position: relative;
+        padding-top: 50px;
+    }
+    .headers{
+        position: sticky;
+        top: -20px;
+        background-color: #fff;
+        height: 50px;
+    }
+    th, td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+</style>
