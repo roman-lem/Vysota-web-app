@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 import os
-from app.services.student_service import createStudent, deleteStudent, getStudent, getStudents
+from app.services.student_service import createStudent, deleteStudent, getStudent, getStudents, setStudent
 from functools import wraps
 from flask import g
 from app.errors import ForbiddenError, ValidationError
@@ -43,3 +43,12 @@ def selectStudent(id):
 @isLogged
 def removeStudent(id):
     return deleteStudent(g.user, id)
+
+@studentBp.route('/students/<id>', methods = ["PATCH"])
+@isLogged
+def editStudent(id):
+    if request.json is not None:
+        validated = studentSetValidator(**request.json)
+        return setStudent(g.user, id, **validated)
+    else:
+        raise ValidationError("", "", "")

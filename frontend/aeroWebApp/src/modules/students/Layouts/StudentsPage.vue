@@ -1,24 +1,35 @@
 <script setup>
 import StudentsTable from "../Components/StudentsTable.vue";
 import StudentForm from "../Components/StudentForm.vue";
-import { useUserStore } from "@/store/userState";
-import { onMounted, ref, watchEffect } from "vue";
+import { onMounted, watch } from "vue";
+import { useStudents } from "@/composables/useStudents";
+import { useForm } from "@/composables/useForm";
+import { debounce } from "vue-debounce";
+import { usePagination } from "@/composables/usePagination";
 
-const store = useUserStore()
-const filterByName = ref("")
-const students = ref([])
-const filters = ref({
-	name: "",
-	level: ""
-})
+const { students, getStudents } = useStudents();
 
-onMounted(async () => {
-	students.value = await store.getStudents(filters.value)
-})
+const { form: filters } = useForm({ name: "", level: "" });
+const {total, pages, pagination} = usePagination()
 
-async function submit(){
-	students.value = await store.getStudents(filters.value)
+onMounted(() => {
+	getStudents({...filters, ...pagination});
+	total.value = students.total
+	console.log("pages", pages)
+});
+
+function goToPage(page){
+	pagination.page = page
 }
+
+watch(() => students.total, () => {total.value = students.total})
+
+watch([filters, pagination], debounce(() => {getStudents({...filters, ...pagination})}, 300), { deep: true });
+
+function refreshTable(){
+	getStudents({...filters, ...pagination})
+}
+
 
 </script>
 
@@ -35,22 +46,24 @@ async function submit(){
 						type="text"
 						placeholder="Поиск по имени"
 						v-model="filters.name"
-						id="search"
 					/>
-					<input
-						type="text"
-						placeholder="Поиск по уровню"
-						v-model="filters.level"
-						id="search"
-					/>
-					<button @click="submit">Применить</button>
+					<select v-model="filters.level" name="level" id="level">
+						<option value="">Любой уровень</option>
+						<option value="Начинающий">Начинающий</option>
+						<option value="Продолжающий">Продолжающий</option>
+						<option value="КМС">КМС</option>
+						<option value="МС">МС</option>
+					</select>
 				</div>
 				<students-table
-					:students="students"
+					:students="students.data"
 					class="student-table"
 				></students-table>
+				<div class="page-number">
+					<div class="page-icon" v-for="page in pages" :key="page" @click="goToPage(page)" :class="(page == pagination.page) ? 'selected':''">{{ page }}</div>
+				</div>
 			</div>
-			<student-form></student-form>
+			<student-form @submit="refreshTable"></student-form>
 		</div>
 	</div>
 </template>
@@ -62,6 +75,7 @@ async function submit(){
 	gap: 20px;
 	padding: 50px;
 	box-sizing: border-box;
+	font-family: "Manrope", sans-serif;
 }
 h2 {
 	font-size: 50px;
@@ -72,20 +86,18 @@ p {
 	font-size: 20px;
 	margin-bottom: 30px;
 }
-.desc {
-	font-family: "Manrope", sans-serif;
-}
 .filters {
 	display: flex;
 	gap: 20px;
 }
-input {
-	width: 300px;
+select {
+	width: 200px;
 	height: 40px;
 	border-radius: 5px;
-	border: 1px solid var(--text-color);
+	border: none;
 	padding: 0 10px;
-	display: inline-block;
+	display: block;
+	color: var(--text-color);
 }
 
 .student-int-wrapper {
@@ -113,5 +125,28 @@ button {
 .student-table {
 	margin-top: 50px;
 	background-color: #fff;
+}
+
+.page-number{
+	display: flex;
+	gap: 5px;
+	justify-content: center;
+	margin-top: 10px;
+}
+
+.page-icon {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	font-size: 14px;
+	border-radius: 5px;
+	background-color: #fff;
+	cursor: pointer;
+}
+
+.selected {
+	background-color: var(--secondary-color-transparent);
+	color: #fff;
 }
 </style>

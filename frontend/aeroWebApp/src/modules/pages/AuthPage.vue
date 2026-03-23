@@ -20,9 +20,7 @@
     --secondary-color-transparent: rgba(20, 184, 166, 0.3);
     --background-color: #F8FAFC;
     --text-color: #1E293B;
-
-    font-family: "Lexand", sans-serif;
-
+    
     width: 400px;
     height: 100vh;
     margin: 0 auto;

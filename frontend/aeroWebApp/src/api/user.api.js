@@ -1,7 +1,7 @@
 import { axios } from "./client.api";
 
-function getUsers() {
-	return axios.get("/users");
+function getUsers(params) {
+	return axios.get("/users", params);
 }
 
 function removeUser(id) {

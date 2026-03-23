@@ -1,5 +1,5 @@
 from app.errors import ValidationError
-
+import datetime
 
 
 def studentGetValidator(**kwargs):
@@ -39,7 +39,7 @@ def studentGetValidator(**kwargs):
         
     if "level" in kwargs:
         level = kwargs["level"]
-        if level not in ["НАЧИНАЮЩИЙ", "ПРОДОЛЖАЮЩИЙ", "КМС", "МС", ""]:
+        if level.upper() not in ["НАЧИНАЮЩИЙ", "ПРОДОЛЖАЮЩИЙ", "КМС", "МС", ""]:
             raise ValidationError("level", kwargs["level"], "in list")
         if level == "":
             level =None
@@ -75,7 +75,7 @@ def studentSetValidator(**kwargs):
     parent_phone = kwargs['parent_phone']
     if "birth_date" not in kwargs:
         raise ValidationError("birth_date", "", "")
-    birth_date = kwargs['birth_date']
+    birth_date = datetime.datetime.strptime(kwargs['birth_date'], '%Y-%m-%d').date()
         
     if not name:
         raise ValidationError("name", name, "")
@@ -89,7 +89,7 @@ def studentSetValidator(**kwargs):
     if len(parent_name) > 100:
         raise ValidationError("parent_name", parent_name, "< 100 symbols")
         
-    if not level.upper() in ["НАЧИНАЮЩИЙ", "ПРОДОЛЖАЮЩИЙ", "КМС", "МС"]:
+    if  level.upper() not in ["НАЧИНАЮЩИЙ", "ПРОДОЛЖАЮЩИЙ", "КМС", "МС"]:
         raise ValidationError("level", level, "in list")
         
     if not parent_phone:
@@ -102,11 +102,9 @@ def studentSetValidator(**kwargs):
         except ValueError:
             return False
         
-    if not all(isInt(x) for x in birth_date.split("-")):
-        raise ValidationError("birth_date", birth_date, "YYYY-MM-DD")
     
     return {"name": kwargs["name"],
             "level": kwargs["level"],
             "parent_name": kwargs["parent_name"],
             "parent_phone": kwargs["parent_phone"],
-            "birth_date": kwargs["birth_date"]}
+            "birth_date": birth_date}

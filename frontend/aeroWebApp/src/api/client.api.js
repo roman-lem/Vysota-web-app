@@ -32,7 +32,7 @@ axios.interceptors.response.use(
         }
 		if (error.response.status !== 401) {
 			return Promise.reject(error);
-		} else if (error.config.url.startsWith("/refresh")) {
+		} else if (error.config.url.includes("/refresh")) {
 			localStorage.removeItem("access_token");
 			localStorage.removeItem("refresh_token");
 			return Promise.reject(error);

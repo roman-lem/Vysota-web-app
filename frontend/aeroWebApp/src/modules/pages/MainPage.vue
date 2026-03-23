@@ -1,5 +1,5 @@
 <script setup>
-    import NavigationSection from './navigation.vue'
+    import NavigationSection from '../shared/Navigation.vue'
     import { RouterView } from 'vue-router';
 
 </script>
@@ -26,8 +26,7 @@
         --secondary-color-transparent: rgba(20, 184, 166, 0.3);
         --background-color: #daebf5;
         --text-color: #1E293B;
-
-        font-family: "Lexand", sans-serif;
+        height: 100%;
         width: 100%;
     }
 
@@ -39,6 +38,6 @@
         grid-template-columns: 250px 1fr;
         gap: 50px;
         background-color: var(--background-color);
-        height: 100vh;
+        height: 100%;
     }
 </style>

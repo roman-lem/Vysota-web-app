@@ -16,4 +16,8 @@ function getStudentById(id) {
 	return axios.get(`/students/${id}`);
 }
 
-export { getStudents, addStudent, removeStudent, getStudentById };
+function setStudent(data) {
+	return axios.patch(`/students/${data.id}`, data)
+}
+
+export { getStudents, addStudent, removeStudent, getStudentById, setStudent};

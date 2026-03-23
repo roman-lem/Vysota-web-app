@@ -11,7 +11,7 @@ def createStudent(user, **kwargs):
         level = kwargs['level'],
         parent_name = kwargs['parent_name'],
         parent_phone = kwargs['parent_phone'],
-        birth_date = datetime.datetime.strptime(kwargs['birth_date'], '%Y-%m-%d').date(),
+        birth_date = kwargs['birth_date'],
         creator_id = user.id
     )
     db.session.add(student)
@@ -60,7 +60,7 @@ def getStudent(user, ident):
                 'level': student.level,
                 'parent_name': student.parent_name,
                 'parent_phone': student.parent_phone,
-                'birth_date': student.birth_date.strftime('%d-%m-%Y')
+                'birth_date': student.birth_date.strftime('%Y-%m-%d')
             },
             'meta': {}
         }, 200
@@ -98,7 +98,7 @@ def getStudents(user, **kwargs):
         'status': s.status,
         'parent_name': s.parent_name,
         'parent_phone': s.parent_phone,
-        'birth_date': s.birth_date.strftime('%d-%m-%Y'),
+        'birth_date': s.birth_date.strftime('%Y-%m-%d'),
         'age': int(str((date.today() - s.birth_date)).split('days')[0])//365
     } for s in query.all()]
     return {
@@ -110,3 +110,24 @@ def getStudents(user, **kwargs):
             'total': total
         }
     }, 200
+    
+def setStudent(user, ident, **kwargs):
+    query = Student.query
+    if not user.hasRole('owner', 'admin'):
+        query = query.filter(Student.creator_id == user.id)
+    student = query.filter(Student.id == ident).first()
+    if not student:
+        return {'message': 'Student does not find',
+            'data': {},
+            'meta': {}}, 404
+    
+    for key in kwargs.keys():
+        print("key", key)
+        print("value", kwargs[key])
+        setattr(student, key, kwargs[key])
+    print(getattr(student, "name"))
+    
+    db.session.commit()
+    return {'message': 'Student updated',
+            'data': {},
+            'meta': {}}, 200

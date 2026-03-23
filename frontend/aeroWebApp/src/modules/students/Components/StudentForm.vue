@@ -1,28 +1,27 @@
 <script setup>
-import { ref } from "vue";
 import { useUserStore } from "@/store/userState";
-import { useRouter } from "vue-router";
+import { useForm } from "@/composables/useForm";
+import { defineEmits } from "vue";
 
 const store = useUserStore();
-const router = useRouter();
+const emit = defineEmits(["submit"])
 
-const data = ref({
+const {form, reset} = useForm({
 	name: "",
 	level: "",
 	parent_name: "",
 	parent_phone: "",
 	birth_date: "",
-});
+})
 
 function submit() {
-	console.log(data.value);
-	console.log(Object.values(data.value));
-	if (Object.values(data.value).includes("")) {
+	if (Object.values(form).includes("")) {
 		alert("Заполните все поля");
 		return;
 	}
-    console.log(data.value.level)
-    store.createStudent(data.value)
+    store.createStudent(form)
+    reset()
+	emit("submit")
 }
 </script>
 
@@ -35,7 +34,7 @@ function submit() {
 		<div class="form">
 			<input
 				type="text"
-				v-model="data.name"
+				v-model="form.name"
 				placeholder="Имя ученика"
 				id="name"
 			/>
@@ -43,14 +42,14 @@ function submit() {
 				<p>Дата рождения</p>
 				<input
 					type="date"
-					v-model="data.birth_date"
+					v-model="form.birth_date"
 					placeholder="Дата рождения"
 					id="birthDate"
 				/>
 			</div>
             <div class="date">
                 <p>Уровень</p>
-                <select v-model="data.level" name="level" id="level">
+                <select v-model="form.level" name="level" id="level">
                     <option value="Начинающий">Начинающий</option>
                     <option value="Продолжающий">Продолжающий</option>
                     <option value="КМС">КМС</option>
@@ -59,13 +58,13 @@ function submit() {
             </div>
 			<input
 				type="text"
-				v-model="data.parent_name"
+				v-model="form.parent_name"
 				placeholder="Имя родителя"
 				id="parentName"
 			/>
 			<input
 				type="phone"
-				v-model="data.parent_phone"
+				v-model="form.parent_phone"
 				placeholder="Телефон родителя"
 				id="parentPhone"
 			/>

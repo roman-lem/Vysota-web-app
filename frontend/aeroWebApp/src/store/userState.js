@@ -1,6 +1,12 @@
 import { defineStore } from "pinia";
-import { authorize, getMe } from "@/api/auth.api";
-import { getStudents, addStudent, getStudentById } from "@/api/student.api";
+import { authorize, getMe, registration } from "@/api/auth.api";
+import {
+	getStudents,
+	addStudent,
+	getStudentById,
+	setStudent,
+} from "@/api/student.api";
+import { getUsers } from "@/api/user.api";
 
 export const useUserStore = defineStore("user", {
 	state: () => ({
@@ -32,6 +38,14 @@ export const useUserStore = defineStore("user", {
 				return res;
 			} catch (e) {
 				this.logout();
+				throw e;
+			}
+		},
+		async register(params) {
+			try {
+				const res = await registration(params);
+				return res;
+			} catch (e) {
 				throw e;
 			}
 		},
@@ -70,15 +84,24 @@ export const useUserStore = defineStore("user", {
 		},
 		async getStudents(params) {
 			const res = await getStudents(params);
-			return res.data.data;
+			return { data: res.data.data, meta: res.data.meta };
 		},
-		async getStudentById(id){
-			const res = await getStudentById(id)
-			return res.data.data
+		async getStudentById(id) {
+			const res = await getStudentById(id);
+			return res.data.data;
 		},
 		async createStudent(data) {
 			const res = await addStudent(data);
 			return res.data.data;
+		},
+		async setStudentParams(data) {
+			const res = await setStudent(data);
+			return res.data;
+		},
+		//=========================================================
+		async getUsers(params) {
+			const res = await getUsers(params);
+			return { data: res.data.data, meta: res.data.meta };
 		},
 	},
 	getters: {

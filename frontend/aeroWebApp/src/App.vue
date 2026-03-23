@@ -1,5 +1,4 @@
 <script setup>
-import { onMounted } from "vue";
 import { useUserStore } from "./store/userState";
 
 const store = useUserStore();
@@ -10,4 +9,5 @@ const store = useUserStore();
 	<RouterView />
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

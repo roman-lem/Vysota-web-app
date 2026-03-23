@@ -2,12 +2,12 @@ import { createRouter, createWebHistory } from "vue-router";
 import Home from "../modules/home/Home.vue";
 import StudentsPage from "../modules/students/Layouts/StudentsPage.vue";
 import StudentInfo from "../modules/students/Layouts/StudentInfo.vue";
-import LoginPage from "../modules/login.vue";
-import RegisterPage from "../modules/register.vue";
-import AuthPage from "../modules/authPage.vue";
+import LoginPage from "../modules/layouts/Login.vue";
+import RegisterPage from "../modules/layouts/Register.vue";
+import AuthPage from "../modules/pages/AuthPage.vue";
 import UsersPage from "../modules/users/Layouts/UsersPage.vue";
 import UserInfo from "../modules/users/Layouts/UserInfo.vue";
-import MainPage from "../modules/mainPage.vue";
+import MainPage from "../modules/pages/MainPage.vue";
 import { useUserStore } from "@/store/userState";
 
 const router = createRouter({

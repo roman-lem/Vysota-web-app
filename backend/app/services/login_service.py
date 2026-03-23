@@ -45,10 +45,10 @@ def authRequired():
 
 def registerUser(data):
     user = User(
-        username = data['username'],
+        username = data['login'],
         password = ph.hash(data['password']),
     )
-    existing_user = User.query.filter_by(username=data['username']).first()
+    existing_user = User.query.filter_by(username=data['login']).first()
 
     if existing_user:
         raise ValidationError('username', 'repeated', 'unique')

@@ -4,14 +4,10 @@ import { computed, defineProps, ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 
-const {students, filterByName} = defineProps({
+const {students} = defineProps({
     students: {
         type: Array,
         default: ref([])
-    },
-    filterByName: {
-        type: String,
-        default: ""
     }
 })
 
@@ -37,7 +33,7 @@ function showStudent(id) {
             <tbody>
                 <tr v-for="student in students" :key="student['id']" @click="showStudent(student['id'])">
                     <td>{{student['name']}}</td>
-                    <td>{{student['birth_date']}}</td>
+                    <td>{{student['birth_date'].split("-").reverse().join(".")}}</td>
                     <td>{{student['age']}}</td>
                     <td>{{student['level']}}</td>
                 </tr>
