@@ -1,4 +1,3 @@
-import datetime
 from datetime import date
 from app.models.student import Student
 from app.models.student_user import StudentUser

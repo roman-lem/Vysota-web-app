@@ -1,18 +1,33 @@
 from app.models.user import User
-from flask import request, g
 from app.errors import UnauthorizedError, ForbiddenError
 
 
-def getUsers():
-    page = 1,
-    limit = 20
-    users = User.query.all()
-    total = len(users)
+def getUsers(**kwargs):
+    page = int(kwargs['page'])
+    limit = int(kwargs['limit'])
+    
+    strictFilters = {}
+    query = User.query.order_by(User.id)
+    for key in strictFilters:
+        if kwargs[key] is not None:
+            query = query.filter(getattr(User, key) == kwargs[key])
+            
+    weakFilters = {"username"}
+    for key in weakFilters:
+        if kwargs.get(key) is not None:
+            column = getattr(User, key)
+            value = kwargs[key]
+            query = query.filter(column.ilike(f"%{value}%"))
+    
+    total = query.count()
+    query = query.offset((page - 1)*limit).limit(limit)
+    
+    
     result = [{
             'id': user.id,
             'username': user.username,
             'roles': [role.name for role in user.roles]
-            } for user in users]
+            } for user in query.all()]
     return {
         'message': 'Users got',
         'data': result,

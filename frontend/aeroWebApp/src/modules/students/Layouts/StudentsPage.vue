@@ -15,7 +15,6 @@ const {total, pages, pagination} = usePagination()
 onMounted(() => {
 	getStudents({...filters, ...pagination});
 	total.value = students.total
-	console.log("pages", pages)
 });
 
 function goToPage(page){

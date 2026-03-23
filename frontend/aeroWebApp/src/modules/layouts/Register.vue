@@ -11,6 +11,7 @@ const { form } = useForm({ login: "", password: "" });
 async function reg() {
 	try {
 		const res = await register({ login: form.login, password: form.password });
+		alert("Регистрация прошла успешно")
 	} catch (e) {
 		if (e.status === 400){
 			alert("Пользователь с таким ником уже существует")

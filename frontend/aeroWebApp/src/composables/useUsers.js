@@ -1,7 +1,7 @@
 import { useUserStore } from "@/store/userState";
 import { ref, reactive } from "vue";
 
-export function useStudents() {
+export function useUsers() {
     const users = reactive({
         total: 0,
         data: [],
@@ -10,14 +10,20 @@ export function useStudents() {
     const store = useUserStore();
 
     async function getUsers(params) {
-        const { data, meta } = await store.getStudents(params);
+        const { data, meta } = await store.getUsers(params);
         users.data = data;
         users.total = meta.total;
+    }
+
+    async function getUserById(id) {
+        const data = await store.getUserById(id)
+        user.value = data
     }
 
     return {
         users,
         user,
         getUsers,
+        getUserById
     };
 }

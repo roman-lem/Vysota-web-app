@@ -1,11 +1,11 @@
 import { axios } from "./client.api";
 
 function getUsers(params) {
-	return axios.get("/users", params);
+	return axios.get("/admin/users", {params});
 }
 
-function removeUser(id) {
-	return axios.delete(`/admin/users/${id}`);
+function getUserById(id) {
+	return axios.get(`/admin/users/${id}`)
 }
 
-export { getUsers, removeUser };
+export { getUsers, getUserById };

@@ -1,6 +1,8 @@
 from flask import Blueprint, request, g
-from app.services.student_service import createStudent, getStudent, getStudents, deleteStudent
+from app.services.student_service import getStudent, getStudents
 from app.services.admin_service import getUsers, getUser
+from app.validators.student_validator import studentGetValidator
+from app.validators.users_validator import userGetValidator
 from functools import wraps
 from app.errors import ForbiddenError, NotFoundError
 
@@ -31,7 +33,8 @@ def greeting():
 @adminBP.route('/admin/students', methods = ["GET"])
 @rolesRequired('admin', 'owner')
 def getMyStudents():
-    return getStudents(g.user, page = 1, limit = 20, **request.args)
+    validated = studentGetValidator(**request.args)
+    return getStudents(g.user, **validated)
 
 @adminBP.route('/admin/students/<id>', methods = ["GET"])
 @rolesRequired('admin', 'owner')
@@ -41,7 +44,8 @@ def selectStudent(id):
 @adminBP.route('/admin/users', methods = ["GET"])
 @rolesRequired('admin', 'owner')
 def getAllUsers():
-    return getUsers()
+    validated = userGetValidator(**request.args)
+    return getUsers(**validated)
 
 @adminBP.route('/admin/users/<id>', methods = ["GET"])
 @rolesRequired('admin', 'owner')

@@ -6,7 +6,7 @@ import {
 	getStudentById,
 	setStudent,
 } from "@/api/student.api";
-import { getUsers } from "@/api/user.api";
+import { getUsers, getUserById } from "@/api/user.api";
 
 export const useUserStore = defineStore("user", {
 	state: () => ({
@@ -103,6 +103,10 @@ export const useUserStore = defineStore("user", {
 			const res = await getUsers(params);
 			return { data: res.data.data, meta: res.data.meta };
 		},
+		async getUserById(id){
+			const res = await getUserById(id)
+			return res.data.data
+		}
 	},
 	getters: {
 		isAuth: (state) => !(state.access_token === null),
