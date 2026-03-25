@@ -6,7 +6,6 @@ loginBP = Blueprint('login', __name__)
 
 @loginBP.route('/auth', methods = ["POST"])
 def login():
-    print(loginUser(request.json))
     return loginUser(request.json)
 
 @loginBP.route('/register', methods = ["POST"])
@@ -18,7 +17,7 @@ def access():
     if g.user:
         return {
             'message': 'Access granted',
-            'data': { 'id': g.user.id, 'roles': [role.name for role in g.user.roles]},
+            'data': { 'id': g.user.id, 'username': g.user.username, 'roles': [role.name for role in g.user.roles]},
             'meta': {}
         }, 200
     else: 

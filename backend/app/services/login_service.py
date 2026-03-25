@@ -37,6 +37,7 @@ def authRequired():
         g.user = user
     except jwt.ExpiredSignatureError:
         g.user = None
+        raise UnauthorizedError("Token expired")
     except jwt.InvalidTokenError:
         g.user = None
     return None
@@ -45,10 +46,10 @@ def authRequired():
 
 def registerUser(data):
     user = User(
-        username = data['login'],
+        username = data['username'],
         password = ph.hash(data['password']),
     )
-    existing_user = User.query.filter_by(username=data['login']).first()
+    existing_user = User.query.filter_by(username=data['username']).first()
 
     if existing_user:
         raise ValidationError('username', 'repeated', 'unique')
@@ -66,11 +67,9 @@ def registerUser(data):
                 'meta': {}}, 200
 
 def loginUser(data):
-    user = User.query.filter_by(username=data["login"]).first()
-    print("user ", user)
+    user = User.query.filter_by(username=data["username"]).first()
     try:
         if user and ph.verify(user.password, data['password']):
-            print("We are here login user")
             accessToken = jwt.encode({'user_id': user.id, "exp": int((datetime.datetime.now(timezone.utc) + timedelta(hours=1)).timestamp())}, jwt_secret, algorithm='HS256')
             refreshToken = jwt.encode({'user_id': user.id, "exp": int((datetime.datetime.now(timezone.utc) + timedelta(days=7)).timestamp())}, jwt_secret, algorithm='HS256')
             return {'message': 'success', 
@@ -80,9 +79,9 @@ def loginUser(data):
                         },
                     'meta': {}}, 200
         else:
-            raise UnauthorizedError('User does not exist')
+            raise UnauthorizedError('Такого пользователя не существует')
     except argon2.exceptions.VerifyMismatchError:
-        raise UnauthorizedError("Incorrect Password")
+        raise UnauthorizedError("Неверный пароль")
     
 
 def refreshToken(token):

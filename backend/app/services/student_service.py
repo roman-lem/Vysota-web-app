@@ -65,8 +65,8 @@ def getStudent(user, ident):
         }, 200
     else:
         return {'message': 'No students found',
-                'data': '',
-                'meta': ''}, 401
+                'data': {},
+                'meta': {}}, 401
     
 def getStudents(user, **kwargs):
     name = kwargs["name"]
