@@ -11,6 +11,7 @@ const router = useRouter();
 function showStudentById(id:number) {
 	router.push(`/students/${id}`);
 }
+
 </script>
 
 <template>

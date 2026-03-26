@@ -27,7 +27,7 @@ onMounted(() => {
 			<div class="data-header">
 				<h2>{{ store.trainer.username }}</h2>
 				<div class="edit">
-					<img src="../../../../public/edit.png" alt="Редактировать" />
+					<img src="./../../../public/edit.png" alt="Редактировать" />
 				</div>
 			</div>
 			<div class="data-container">

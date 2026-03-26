@@ -3,7 +3,7 @@ import { errorHandler } from "../notifications/providers/errorHandler";
 
 
 const axios = Axios.create({
-	baseURL: "http://localhost:5000",
+	baseURL: "/api",
 	timeout: 0,
 	headers: {
 		"Content-Type": "application/json"

@@ -3,7 +3,7 @@ import { useAuth } from "@/features/auth/model/useAuth";
 import { useForm } from "@/shared/lib/useForm";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import { Credentials } from "../api/auth.api";
+import type { Credentials } from "../api/auth.api";
 const router = useRouter();
 
 const { loading, login } = useAuth();

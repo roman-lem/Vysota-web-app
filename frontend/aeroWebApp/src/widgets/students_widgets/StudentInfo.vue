@@ -60,7 +60,7 @@ async function changeEditMode() {
 				<h2>{{ store.student.name }}</h2>
 				<div class="edit" @click="changeEditMode">
 					<img
-						src="./../../../../public/edit.png"
+						src="./../../../public/edit.png"
 						alt="Редактировать"
 					/>
 				</div>

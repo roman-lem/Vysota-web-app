@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useForm } from "@/shared/lib/useForm";
 import { useStudents } from "@/features/student_management/model/useStudentManagement";
+import { useNoteStore } from "@/shared/notifications/store/notifications.store";
+import { v4 as uuid4 } from "uuid";
 
 const emit = defineEmits(["submit"])
 const {createStudent} = useStudents()
@@ -13,14 +15,33 @@ const {data: form, reset} = useForm({
 	birth_date: "",
 })
 
-function submit() {
+async function submit() {
+	const noteStore = useNoteStore()
 	if (Object.values(form.value).includes("")) {
-		alert("Заполните все поля");
+		noteStore.createNote({
+			id: uuid4(),
+			message: "Заполните все поля",
+			createdAt: Date.now(),
+			type: "warning",
+			duration: 4000,
+			persistent: false,
+			source: "ui",
+			dedupeKey: "empty_form"
+		})
 		return;
 	}
 
-	createStudent(form.value)
-
+	await createStudent(form.value)
+	noteStore.createNote({
+			id: uuid4(),
+			message: "Ученик успешно добавлен",
+			createdAt: Date.now(),
+			type: "success",
+			duration: 2000,
+			persistent: false,
+			source: "ui",
+			dedupeKey: "empty_form"
+		})
     reset()
 	emit("submit")
 }
@@ -29,7 +50,7 @@ function submit() {
 <template>
 	<div class="form-wrapper">
 		<div class="form-header">
-			<img src="../../../public/aside/addStudent.png" alt="" />
+			<img src="./../../../../public/aside/addStudent.png" alt="" />
 			<h3>Добавить ученика</h3>
 		</div>
 		<div class="form">

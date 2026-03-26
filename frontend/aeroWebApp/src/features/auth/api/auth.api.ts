@@ -3,7 +3,7 @@ import type { User, CreatingUser } from "@/entities/user/model/user.types";
 import type { Response } from "@/shared/types/shared.types";
 import { useUserStore } from "@/entities/user/model/user.store";
 import type { AxiosResponse } from "axios";
-import { useRoute, useRouter } from "vue-router";
+import { getActivePinia } from "pinia";
 
 interface Credentials {
 	username: string;
@@ -11,8 +11,8 @@ interface Credentials {
 }
 
 async function getMe(): Promise<User> {
-	const res: AxiosResponse =  await axios.get("/access");
-	return res.data.data
+	const res: AxiosResponse = await axios.get("/access");
+	return res.data.data;
 }
 
 async function registration(userData: CreatingUser): Promise<AxiosResponse> {
@@ -25,7 +25,7 @@ async function registration(userData: CreatingUser): Promise<AxiosResponse> {
 }
 
 function authAsAdmin() {
-	const store = useUserStore()
+	const store = useUserStore();
 	if (store.hasAnyRoles("admin", "owner")) {
 		store.isAdminAuth = true;
 	}
@@ -40,7 +40,7 @@ function logout() {
 	store.access_token = "";
 	store.refresh_token = "";
 	store.user = null;
-	store.isAdminAuth = false
+	store.isAdminAuth = false;
 	localStorage.removeItem("access_token");
 	localStorage.removeItem("refresh_token");
 }
@@ -49,13 +49,18 @@ async function initAuth() {
 	const at = localStorage.getItem("access_token");
 	const rt = localStorage.getItem("refresh_token");
 	if (at && rt) {
-		const store = useUserStore();
+		const pinia = getActivePinia();
+		if (!pinia) {
+			console.error("Pinia not initialized");
+			return;
+		}
+		const store = useUserStore(pinia);
 		store.access_token = at;
 		store.refresh_token = rt;
 		return getMe()
 			.then((response) => {
 				store.user = response;
-				store.isAdminAuth = false
+				store.isAdminAuth = false;
 				console.log("initAuth set:", store.isAdminAuth);
 			})
 			.catch((e) => {

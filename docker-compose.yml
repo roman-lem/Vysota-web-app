@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  backend:
+    build: ./backend
+    container_name: aero_backend
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+  db:
+    image: postgres:15
+    container_name: aero_db
+    restart: always
+    environment:
+      POSTGRES_USER: aero_user
+      POSTGRES_PASSWORD: aero_pass
+      POSTGRES_DB: aero_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+    - "5432:5432"
+
+  nginx:
+    image: nginx:latest
+    container_name: aero_nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./frontend/aeroWebApp/nginx.conf:/etc/nginx/nginx.conf
+      - ./frontend/aeroWebApp/dist:/usr/share/nginx/html
+    depends_on:
+      - backend
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: aero_pgadmin
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5051:80"
+    volumes:
+    - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
+  pgadmin_data:

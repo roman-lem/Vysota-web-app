@@ -10,6 +10,7 @@ import TrainerInfo from "@/widgets/trainer_widgets/TrainerInfo.vue";
 import MainPage from "@/pages/main/MainPage.vue";
 import { useUserStore } from "@/entities/user/model/user.store";
 import { useNoteStore } from "@/shared/notifications/store/notifications.store";
+import { getActivePinia } from "pinia";
 
 const router = createRouter({
 	history: createWebHistory(),
@@ -68,8 +69,13 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from) => {
-	const store = useUserStore();
-	const notifications = useNoteStore()
+	const pinia = getActivePinia()
+    if (!pinia) {
+        console.error('Pinia not initialized')
+        return
+    }
+  	const store = useUserStore(pinia)
+	const notifications = useNoteStore(pinia)
 	notifications.clear()
 	if (to.matched.some((s) => s.meta.guestOnly)) {
 		if (store.isAuth) {

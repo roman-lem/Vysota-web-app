@@ -6,5 +6,5 @@ application = createApp()
 def index():
     return 'Hello World'
 
-if __name__ == "__main__":
-    application.run(debug=True)
+# if __name__ == "__main__":
+#     application.run()
