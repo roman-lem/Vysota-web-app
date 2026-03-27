@@ -3,36 +3,42 @@ import { ref } from "vue";
 import { useAuth } from "@/features/auth/model/useAuth";
 import { useForm } from "@/shared/lib/useForm";
 import { type CreatingUser } from "@/entities/user/model/user.types";
-import { isAxiosError, type AxiosResponse } from "axios";
 import { useRouter } from "vue-router";
-import { errorHandler } from "@/shared/notifications/providers/errorHandler";
 import { useNoteStore } from "@/shared/notifications/store/notifications.store";
+import PrimaryButton from "@/shared/ui/PrimaryButton.vue";
+import SimpleInput from "@/shared/ui/SimpleInput.vue";
+import type { AxiosResponse } from "axios";
 
 const isPasswordShown = ref(false);
 
-const { loading, register } = useAuth();
-const { data: formData } = useForm<CreatingUser>({ username: "", password: "" });
-const router = useRouter()
-const {createNote} = useNoteStore()
+const { register } = useAuth();
+const { data: formData } = useForm<CreatingUser>({
+	username: "",
+	password: "",
+});
+const router = useRouter();
+const { createNote } = useNoteStore();
 
 async function reg() {
 	try {
-		const res: AxiosResponse = await register({ username: formData.value.username, password: formData.value.password });
-		if (res.status === 200){
-				createNote({
-					id: crypto.randomUUID(),
-					type: "success",
-					message: "Регистрация прошла успешно",
-					duration: 2000,
-					createdAt: Date.now(),
-					persistent: false,
-					dedupeKey: "register_success",
-					source: "ui"
-				})
-			router.push("/")
+		const res: AxiosResponse = await register({
+			username: formData.value.username,
+			password: formData.value.password,
+		});
+		if (res.status === 200) {
+			createNote({
+				id: crypto.randomUUID(),
+				type: "success",
+				message: "Регистрация прошла успешно",
+				duration: 2000,
+				createdAt: Date.now(),
+				persistent: false,
+				dedupeKey: "register_success",
+				source: "ui",
+			});
+			router.push("/");
 		}
-	} catch (e) {
-	}
+	} catch (e) {}
 }
 </script>
 
@@ -40,9 +46,15 @@ async function reg() {
 	<div class="form">
 		<h1>Регистрация</h1>
 		<div class="auth">
-			<input type="text" placeholder="Логин" v-model="formData.username" />
+			<simple-input
+				class="simple-input"
+				type="text"
+				placeholder="Логин"
+				v-model="formData.username"
+			/>
 			<div class="password">
-				<input
+				<simple-input
+					class="simple-input"
 					:type="isPasswordShown ? 'text' : 'password'"
 					placeholder="Пароль"
 					v-model="formData.password"
@@ -85,7 +97,7 @@ async function reg() {
 					/>
 				</svg>
 			</div>
-			<button @click="reg()">Зарегистрироваться</button>
+			<primary-button class="primary-button" @click="reg()">Зарегистрироваться</primary-button>
 		</div>
 		<p>Уже есть аккаунт? <RouterLink to="/auth">Войти</RouterLink></p>
 	</div>
@@ -124,27 +136,13 @@ async function reg() {
 	margin-bottom: 20px;
 }
 
-input {
+
+.primary-button {
 	width: 200px;
-	height: 40px;
-	border-radius: 5px;
-	border: none;
-	padding: 0 10px;
-	background-color: #fff;
-	font-size: 18px;
-	font-weight: 400;
 }
 
-button {
+.simple-input {
 	width: 200px;
-	height: 40px;
-	border-radius: 5px;
-	border: none;
-	background-color: var(--primary-color);
-	color: white;
-	cursor: pointer;
-	font-weight: 400;
-	font-size: 15px;
 }
 
 .password {

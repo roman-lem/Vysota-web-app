@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import StudentsTable from "@/entities/student/ui/StudentsTable.vue";
 import StudentForm from "@/entities/student/ui/StudentForm.vue";
-import { onMounted, watchEffect, watch } from "vue";
+import StudentsTable from "@/shared/ui/Table.vue";
+import { onMounted, watchEffect, watch, computed } from "vue";
+import { useRouter } from "vue-router";
 import { useStudents } from "@/features/student_management/model/useStudentManagement";
 import { useForm } from "@/shared/lib/useForm";
 import { debounce } from "vue-debounce";
@@ -9,31 +10,48 @@ import { usePagination } from "@/shared/lib/usePagination";
 import { useStudentStore } from "@/entities/student/model/student.store";
 
 const { fetchStudents, total: numOfStudents } = useStudents();
-const store = useStudentStore()
+const store = useStudentStore();
 
 const { data: filters } = useForm({ name: "", level: "" });
-const { total, pages, pagination} = usePagination()
+const { total, pages, pagination } = usePagination();
 
 onMounted(async () => {
-	await fetchStudents({...filters.value, ...pagination});
+	await fetchStudents({ ...filters.value, ...pagination });
 });
 
-function goToPage(page: number){
-	pagination.page = page
+function goToPage(page: number) {
+	pagination.page = page;
+}
+
+function goToStudent(id: number) {
+	const router = useRouter()
+	router.push(`/students/${id}`);
 }
 
 watchEffect(() => {
-	total.value = numOfStudents.value
-})
+	total.value = numOfStudents.value;
+});
 
+watch(
+	[filters.value, pagination],
+	debounce(() => {
+		fetchStudents({ ...filters.value, ...pagination });
+	}, 300),
+	{ deep: true },
+);
 
-watch([filters.value, pagination], debounce(() => {fetchStudents({...filters.value, ...pagination})}, 300), { deep: true });
-
-function refreshTable(){
-	fetchStudents({...filters.value, ...pagination})
+function refreshTable() {
+	fetchStudents({ ...filters.value, ...pagination });
 }
 
-
+const students_data = computed(() => {
+	return store.students.map((student) => [
+		student.id,
+		student.name,
+		student.birth_date,
+		student.level,
+	]);
+});
 </script>
 
 <template>
@@ -59,11 +77,21 @@ function refreshTable(){
 					</select>
 				</div>
 				<students-table
-					:students="store.students"
+					@row_click="goToStudent"
+					:headers="['Имя', 'Дата рождения', 'Разряд']"
+					:data="students_data"
 					class="student-table"
 				></students-table>
 				<div class="page-number">
-					<div class="page-icon" v-for="page in pages" :key="page" @click="goToPage(page)" :class="(page == pagination.page) ? 'selected':''">{{ page }}</div>
+					<div
+						class="page-icon"
+						v-for="page in pages"
+						:key="page"
+						@click="goToPage(page)"
+						:class="page == pagination.page ? 'selected' : ''"
+					>
+						{{ page }}
+					</div>
 				</div>
 			</div>
 			<student-form @submit="refreshTable"></student-form>
@@ -126,11 +154,11 @@ button {
 	cursor: pointer;
 }
 .student-table {
-	margin-top: 50px;
+	margin-top: 10px;
 	background-color: #fff;
 }
 
-.page-number{
+.page-number {
 	display: flex;
 	gap: 5px;
 	justify-content: center;
