@@ -3,6 +3,8 @@ import { useAuth } from "@/features/auth/model/useAuth";
 import { useForm } from "@/shared/lib/useForm";
 import { ref } from "vue";
 import { useRouter } from "vue-router";
+import SimpleInput from "@/shared/ui/SimpleInput.vue";
+import PrimaryButton from "@/shared/ui/PrimaryButton.vue";
 import type { Credentials } from "../api/auth.api";
 const router = useRouter();
 
@@ -19,9 +21,10 @@ function toReg() {
 	<div class="login">
 		<h1>Авторизация</h1>
 		<div class="auth">
-			<input type="text" placeholder="Логин" v-model="formData.username" />
+			<simple-input class="simple-input" type="text" placeholder="Логин" v-model="formData.username" />
 			<div class="password">
-				<input
+				<simple-input
+				class="simple-input"
 					:type="isPasswordShown ? 'text' : 'password'"
 					placeholder="Пароль"
 					v-model="formData.password"
@@ -64,14 +67,15 @@ function toReg() {
 					/>
 				</svg>
 			</div>
-			<button
+			<primary-button
+			class="primary-button"
 				:disabled="loading"
 				@click="
 					login({ username: formData.username, password: formData.password })
 				"
 			>
 				Войти
-			</button>
+			</primary-button>
 		</div>
 		<p class="register" @click="toReg">Зарегистрироваться</p>
 	</div>
@@ -115,17 +119,6 @@ function toReg() {
 	font-family: "Manrope", sans-serif;
 }
 
-.auth input {
-	width: 200px;
-	height: 40px;
-	border-radius: 5px;
-	border: none;
-	padding: 0 10px;
-	background-color: #fff;
-	font-size: 18px;
-	font-weight: 400;
-	
-}
 
 .password {
 	position: relative;
@@ -138,19 +131,15 @@ function toReg() {
 	left: 210px;
 }
 
-.auth button {
+.simple-input {
 	width: 200px;
-	height: 40px;
-	border-radius: 5px;
-	border: none;
-	background-color: var(--primary-color);
-	color: white;
-	cursor: pointer;
-	font-weight: 400;
-	font-size: 18px;
 }
 
-.auth button:disabled {
+.auth .primary-button {
+	width: 200px;
+}
+
+.auth .primary-button:disabled {
 	background-color: #bbb;
 }
 

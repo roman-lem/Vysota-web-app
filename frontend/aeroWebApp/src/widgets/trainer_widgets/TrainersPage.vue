@@ -1,32 +1,52 @@
 <script setup lang="ts">
-import TrainersTable from "./TrainersTable.vue";
-import { onMounted, watch, watchEffect } from "vue";
+import TrainersTable from "@/shared/ui/Table.vue";
+import { computed, onMounted, watch, watchEffect } from "vue";
 import { useTrainers } from "@/features/trainer_management/model/useTrainerManagement";
 import { useForm } from "@/shared/lib/useForm";
 import { debounce } from "vue-debounce";
 import { usePagination } from "@/shared/lib/usePagination";
 import { useTrainerStore } from "@/entities/trainer/model/trainer.store";
+import { useRouter } from "vue-router";
 
 const { fetchTrainers, total: numOfTrainers } = useTrainers();
-const store = useTrainerStore()
+const store = useTrainerStore();
 
 const { data: filters } = useForm({ name: "", roles: [] });
-const {total, pages, pagination} = usePagination()
+const { total, pages, pagination } = usePagination();
 
 onMounted(() => {
-	fetchTrainers({...filters.value, ...pagination});
+	fetchTrainers({ ...filters.value, ...pagination });
 });
 
-function goToPage(page: number){
-	pagination.page = page
+function goToPage(page: number) {
+	pagination.page = page;
 }
 
+function goToTrainer(id: number) {
+	const router = useRouter()
+	router.push(`/users/${id}`);
+}
+
+const trainers_data = computed(() => {
+	return store.trainers.map((trainer) => [
+		trainer.id,
+		trainer.id,
+		trainer.username,
+		trainer.roles.join(", "),
+	]);
+});
+
 watchEffect(() => {
-	total.value = numOfTrainers.value
-})
+	total.value = numOfTrainers.value;
+});
 
-watch([filters.value, pagination], debounce(() => {fetchTrainers({...filters.value, ...pagination})}, 300), { deep: true });
-
+watch(
+	[filters.value, pagination],
+	debounce(() => {
+		fetchTrainers({ ...filters.value, ...pagination });
+	}, 300),
+	{ deep: true },
+);
 </script>
 
 <template>
@@ -44,12 +64,21 @@ watch([filters.value, pagination], debounce(() => {fetchTrainers({...filters.val
 						v-model="filters.name"
 					/>
 				</div>
-				<trainers-table
-					:trainers="store.trainers"
+				<trainers-table @row_click="goToTrainer"
+					:headers="['ID', 'Username', 'Roles']"
+					:data="trainers_data"
 					class="users-table"
 				></trainers-table>
 				<div class="page-number">
-					<div class="page-icon" v-for="page in pages" :key="page" @click="goToPage(page)" :class="(page == pagination.page) ? 'selected':''">{{ page }}</div>
+					<div
+						class="page-icon"
+						v-for="page in pages"
+						:key="page"
+						@click="goToPage(page)"
+						:class="page == pagination.page ? 'selected' : ''"
+					>
+						{{ page }}
+					</div>
 				</div>
 			</div>
 		</div>
@@ -106,7 +135,7 @@ button {
 	background-color: #fff;
 }
 
-.page-number{
+.page-number {
 	display: flex;
 	gap: 5px;
 	justify-content: center;
