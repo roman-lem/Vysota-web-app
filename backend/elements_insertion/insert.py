@@ -1,4 +1,5 @@
 from psycopg2.extras import execute_values
+from collections import Counter
 import psycopg2
 import csv
 
@@ -13,8 +14,8 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 query = '''
-    INSERT INTO elements (type, code, score, equipment, description, image)
-    VALUES (%s, %s, %s, %s, %s, %s)
+    INSERT INTO element (type, is_custom, code, score, equipment, description, image)
+    VALUES %s
     ON CONFLICT (code) DO UPDATE SET
         type = EXCLUDED.type,
         score = EXCLUDED.score,
@@ -24,18 +25,33 @@ query = '''
 '''
 
 data = []
-with open("all_elements.csv", newline="", encoding="utf-8") as f:
+with open("./elements_insertion/all_elements.csv", newline="", encoding="utf-8") as f:
     reader = csv.DictReader(f)
 
     for row in reader:
         data.append((
             row["type"],
+            False,
             row["code"],
             float(row["score"]),
             row["equipment"],
             row["description"],
             row["image"]
         ))
+
+    seen = set()
+    filtered = []
+
+    for row in data:
+        code = row[2]
+        
+        if code is None or code not in seen:
+            filtered.append(row)
+            if code is not None:
+                seen.add(code)
+
+    data = filtered
+    print(len(filtered))
 
 execute_values(cur, query, data, page_size=1200)
 

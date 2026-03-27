@@ -32,7 +32,6 @@ def createApp():
     register_error_handlers(app)
 
     with app.app_context():
-        db.drop_all()
         db.create_all()
         for role in roles:
             exists = db.session.query(Role.id).filter_by(name=role).first()
