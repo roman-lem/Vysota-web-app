@@ -21,3 +21,5 @@ class User(db.Model):
     
     def restore(self):
         self.deleted_at = None
+
+    __tablename__ = "user"

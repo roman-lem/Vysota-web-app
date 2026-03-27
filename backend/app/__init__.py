@@ -1,7 +1,7 @@
 import os
 from flask import Flask
 from flask_cors import CORS
-from app.extensions import db, migrate
+from app.extensions import db
 from app.routes.student_routes import studentBp
 from app.routes.login_routers import loginBP
 from app.routes.admin_routes import adminBP
@@ -22,7 +22,6 @@ def createApp():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     CORS(app, origins="http://localhost:5173")
     db.init_app(app)
-    migrate.init_app(app, db)
 
     app.register_blueprint(studentBp)
     app.register_blueprint(loginBP)
@@ -33,6 +32,7 @@ def createApp():
     register_error_handlers(app)
 
     with app.app_context():
+        db.drop_all()
         db.create_all()
         for role in roles:
             exists = db.session.query(Role.id).filter_by(name=role).first()
