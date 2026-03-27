@@ -4,7 +4,7 @@ export function usePagination() {
 	const total = ref<number>(0);
 	const pagination = reactive({
 		page: 1,
-		limit: 3,
+		limit: 20,
 	});
 
     const pages = computed(() => {

@@ -7,7 +7,6 @@ from app.errors import ForbiddenError, ValidationError
 from app.validators.student_validator import studentGetValidator, studentSetValidator
 
 studentBp = Blueprint('student', __name__)
-jwt_secret = os.getenv("SECRET_KEY")
 
 def isLogged(f):
     @wraps(f)

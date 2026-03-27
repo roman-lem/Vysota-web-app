@@ -11,13 +11,17 @@ class Student(db.Model):
     birth_date = db.Column(db.Date)
     creator_id = db.Column(db.Integer, db.ForeignKey('user.id', name = 'FK_userId_in_Student'), nullable = False)
     trainers = db.relationship('User', secondary = 'student_user', back_populates='students')
+    elements =  db.relationship('Element', secondary = 'progress')
+    photo = db.Column(db.String(200))
 
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime, onupdate=datetime.now(timezone.utc))
     deleted_at = db.Column(db.DateTime, nullable=True)
 
     def soft_delete(self):
-        self.deleted_at = datetime.utcnow()
+        self.deleted_at = datetime.now(timezone.utc)
     
     def restore(self):
         self.deleted_at = None
+
+    __tablename__ = "student"

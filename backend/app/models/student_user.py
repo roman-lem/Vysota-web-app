@@ -7,3 +7,5 @@ class StudentUser(db.Model):
     __table_args__ = (
         db.UniqueConstraint('user_id', 'student_id', name='_user_student_uc'),
     )
+
+    __table_name__ = "student_user"

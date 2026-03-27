@@ -19,7 +19,7 @@ onMounted(() => {
 	<div class="selected-user" v-if="store.trainer != null">
 		<div class="photo">
 			<img
-				:src="'../../../public/default.jpg'"
+				src="/default.jpg"
 				alt="Фото тренера"
 			/>
 		</div>
@@ -27,7 +27,7 @@ onMounted(() => {
 			<div class="data-header">
 				<h2>{{ store.trainer.username }}</h2>
 				<div class="edit">
-					<img src="./../../../public/edit.png" alt="Редактировать" />
+					<img src="/edit.png" alt="Редактировать" />
 				</div>
 			</div>
 			<div class="data-container">

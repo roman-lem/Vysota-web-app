@@ -51,7 +51,7 @@ async function changeEditMode() {
 	<div class="selected-student" v-if="store.student != null">
 		<div class="photo">
 			<img
-				:src="'../../../public/default.jpg'"
+				src="/default.jpg"
 				alt="Фото студента"
 			/>
 		</div>
@@ -60,7 +60,7 @@ async function changeEditMode() {
 				<h2>{{ store.student.name }}</h2>
 				<div class="edit" @click="changeEditMode">
 					<img
-						src="./../../../public/edit.png"
+						src="/edit.png"
 						alt="Редактировать"
 					/>
 				</div>
