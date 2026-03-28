@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, g
 from app.validators.element_validator import elementGetValidator
 from app.services.element_service import fetchElements
 

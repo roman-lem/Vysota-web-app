@@ -10,9 +10,9 @@ def fetchElements(user, **kwargs):
     if not user.hasRole('owner', 'admin'):
         user_elements = user.elements
 
-    common_elements = Element.query.filter(is_custom == False)
+    common_elements = Element.query.filter(Element.is_custom == False)
 
-    elements = user_elements.union(common_elements)
+    elements = user_elements.union_all(common_elements)
     
     total = elements.count()
     elements = elements.offset((page - 1)*limit).limit(limit)
