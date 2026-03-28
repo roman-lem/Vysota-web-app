@@ -14,10 +14,11 @@ conn = psycopg2.connect(
 cur = conn.cursor()
 
 query = '''
-    INSERT INTO element (type, is_custom, code, score, equipment, description, image)
+    INSERT INTO element (type, is_custom, sportsmen_number, code, score, equipment, description, image)
     VALUES %s
     ON CONFLICT (code) DO UPDATE SET
         type = EXCLUDED.type,
+        sportsmen_number = EXCLUDED.sportsmen_number
         score = EXCLUDED.score,
         equipment = EXCLUDED.equipment,
         description = EXCLUDED.description,
@@ -32,6 +33,7 @@ with open("./elements_insertion/all_elements.csv", newline="", encoding="utf-8")
         data.append((
             row["type"],
             False,
+            int(row["sportsmen_number"]),
             row["code"],
             float(row["score"]),
             row["equipment"],

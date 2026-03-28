@@ -4,6 +4,7 @@ class Element(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     is_custom = db.Column(db.Boolean, default=False)
     type = db.Column(db.String(50), nullable = False)
+    sportsmen_number = db.Column(db.Integer, nullable = False)
     equipment = db.Column(db.String(50), nullable = False)
     score = db.Column(db.Float, nullable = False)
     code = db.Column(db.String(20), nullable = True, unique = True)
