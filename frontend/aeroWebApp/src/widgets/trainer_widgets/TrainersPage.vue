@@ -23,7 +23,7 @@ function goToPage(page: number) {
 }
 
 function goToTrainer(id: number) {
-	const router = useRouter()
+	const router = useRouter();
 	router.push(`/users/${id}`);
 }
 
@@ -64,7 +64,9 @@ watch(
 						v-model="filters.name"
 					/>
 				</div>
-				<trainers-table @row_click="goToTrainer"
+				<trainers-table
+					@row_click="goToTrainer"
+					:rel_width="[1, 5, 5]"
 					:headers="['ID', 'Username', 'Roles']"
 					:data="trainers_data"
 					class="users-table"

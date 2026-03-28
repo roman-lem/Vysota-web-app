@@ -12,6 +12,7 @@ const { data: filters } = useForm({ name: "", roles: [] });
 const { total, pages, pagination } = usePagination();
 
 onMounted(async () => {
+	pagination.limit = 10
 	const res = await store.loadElements({ ...filters.value, ...pagination });
     total.value = res.total
 });
@@ -30,6 +31,7 @@ const elements_data = computed(() => {
         element.description,
 	]);
 });
+
 
 watch(
 	[filters.value, pagination],
@@ -52,6 +54,7 @@ watch(
 				<div class="filters">
 				</div>
 				<elements-table
+					:rel_width="[1, 2, 2, 2, 8]"
 					:headers="['Код', 'Категория', 'Снаряд', 'Стоимость', 'Описание']"
 					:data="elements_data"
 					class="users-table"
