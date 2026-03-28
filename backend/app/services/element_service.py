@@ -21,6 +21,7 @@ def fetchElements(user, **kwargs):
     result = [{
             'id': element.id,
             'type': element.type,
+            'sportsmen_number': element.sportsmen_number,
             'equipment': element.equipment,
             'score': element.score,
             'code': element.code,
