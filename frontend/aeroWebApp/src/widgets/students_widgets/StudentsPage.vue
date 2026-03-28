@@ -77,6 +77,7 @@ const students_data = computed(() => {
 					</select>
 				</div>
 				<students-table
+					:rel_width="[2, 1, 1]"
 					@row_click="goToStudent"
 					:headers="['Имя', 'Дата рождения', 'Разряд']"
 					:data="students_data"

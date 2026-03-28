@@ -10,6 +10,7 @@ const router = useRouter();
 const menuItems = [
 	{ name: "Главная", path: "", isAdminNeeded: false },
 	{ name: "Студенты", path: "students", isAdminNeeded: false },
+	{ name: "Элементы", path: "elements", isAdminNeeded: false },
 	{ name: "Пользователи", path: "users", isAdminNeeded: true },
 ];
 

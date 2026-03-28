@@ -5,3 +5,4 @@ from app.models.progress import Progress
 from app.models.student_user import StudentUser
 from app.models.role import Role
 from app.models.user_role import UserRole
+from app.models.user_element import UserElement

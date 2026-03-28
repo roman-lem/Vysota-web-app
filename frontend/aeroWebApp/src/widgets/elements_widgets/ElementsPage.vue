@@ -1,76 +1,64 @@
 <script setup lang="ts">
-import TrainersTable from "@/shared/ui/Table.vue";
+import ElementsTable from "@/shared/ui/Table.vue";
 import { computed, onMounted, watch, watchEffect } from "vue";
-import { useTrainers } from "@/features/trainer_management/model/useTrainerManagement";
 import { useForm } from "@/shared/lib/useForm";
 import { debounce } from "vue-debounce";
 import { usePagination } from "@/shared/lib/usePagination";
-import { useTrainerStore } from "@/entities/trainer/model/trainer.store";
-import { useRouter } from "vue-router";
+import { useElementStore } from "@/entities/element/model/element.store";
 
-const { fetchTrainers, total: numOfTrainers } = useTrainers();
-const store = useTrainerStore();
+const store = useElementStore()
 
 const { data: filters } = useForm({ name: "", roles: [] });
 const { total, pages, pagination } = usePagination();
 
-onMounted(() => {
-	fetchTrainers({ ...filters.value, ...pagination });
+onMounted(async () => {
+	pagination.limit = 10
+	const res = await store.loadElements({ ...filters.value, ...pagination });
+    total.value = res.total
 });
 
 function goToPage(page: number) {
 	pagination.page = page;
 }
 
-function goToTrainer(id: number) {
-	const router = useRouter();
-	router.push(`/users/${id}`);
-}
-
-const trainers_data = computed(() => {
-	return store.trainers.map((trainer) => [
-		trainer.id,
-		trainer.id,
-		trainer.username,
-		trainer.roles.join(", "),
+const elements_data = computed(() => {
+	return store.elements.map((element) => [
+		element.id,
+        element.code,
+		element.type,
+		element.equipment,
+        element.score,
+        element.description,
 	]);
 });
 
-watchEffect(() => {
-	total.value = numOfTrainers.value;
-});
 
 watch(
 	[filters.value, pagination],
-	debounce(() => {
-		fetchTrainers({ ...filters.value, ...pagination });
+	debounce(async () => {
+		const res = await store.loadElements({ ...filters.value, ...pagination });
+        total.value = res.total
 	}, 300),
 	{ deep: true },
 );
 </script>
 
 <template>
-	<div class="users-wrapper">
+	<div class="elements-wrapper">
 		<div class="desc">
-			<h2>Тренера</h2>
-			<p>Управление пользователями</p>
+			<h2>Элементы</h2>
+			<p>Общая база</p>
 		</div>
-		<div class="users-int-wrapper">
+		<div class="elements-int-wrapper">
 			<div class="table">
 				<div class="filters">
-					<input
-						type="text"
-						placeholder="Поиск по имени"
-						v-model="filters.name"
-					/>
 				</div>
-				<trainers-table
-					@row_click="goToTrainer"
-					:rel_width="[1, 5, 5]"
-					:headers="['ID', 'Username', 'Roles']"
-					:data="trainers_data"
+				<elements-table
+					:rel_width="[1, 2, 2, 2, 8]"
+					:headers="['Код', 'Категория', 'Снаряд', 'Стоимость', 'Описание']"
+					:data="elements_data"
 					class="users-table"
-				></trainers-table>
+				></elements-table>
 				<div class="page-number">
 					<div
 						class="page-icon"
@@ -88,7 +76,7 @@ watch(
 </template>
 
 <style scoped>
-.users-wrapper {
+.elements-wrapper {
 	display: flex;
 	flex-direction: column;
 	gap: 20px;
@@ -110,12 +98,12 @@ p {
 	gap: 20px;
 }
 
-.users-int-wrapper {
+.elements-int-wrapper {
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: 50px;
 }
-.users-int-wrapper input {
+.elements-int-wrapper input {
 	width: 200px;
 	height: 40px;
 	border-radius: 5px;

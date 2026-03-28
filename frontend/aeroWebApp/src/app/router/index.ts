@@ -8,6 +8,7 @@ import AuthPage from "@/pages/auth/AuthPage.vue";
 import TrainersPage from "@/widgets/trainer_widgets/TrainersPage.vue";
 import TrainerInfo from "@/widgets/trainer_widgets/TrainerInfo.vue";
 import MainPage from "@/pages/main/MainPage.vue";
+import ElementsPage from "@/widgets/elements_widgets/ElementsPage.vue";
 import { useUserStore } from "@/entities/user/model/user.store";
 import { useNoteStore } from "@/shared/notifications/store/notifications.store";
 import { getActivePinia } from "pinia";
@@ -28,6 +29,7 @@ const router = createRouter({
 					name: "SelectedStudent",
 					component: StudentInfo,
 				},
+				{ path: "elements", name: "Elements", component: ElementsPage },
 			],
 		},
 		{

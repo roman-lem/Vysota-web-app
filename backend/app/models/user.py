@@ -12,7 +12,7 @@ class User(db.Model):
 
     roles = db.relationship('Role', secondary = 'user_role', back_populates='users')
     students = db.relationship('Student', secondary = 'student_user', back_populates='trainers')
-    elements = db.relationship('Element', secondary = 'user_element')
+    elements = db.relationship('Element', secondary = 'user_element', lazy='dynamic')
 
     def hasRole(self, *names):
         return any(role.name in names for role in self.roles)
