@@ -18,7 +18,7 @@ query = '''
     VALUES %s
     ON CONFLICT (code) DO UPDATE SET
         type = EXCLUDED.type,
-        sportsmen_number = EXCLUDED.sportsmen_number
+        sportsmen_number = EXCLUDED.sportsmen_number,
         score = EXCLUDED.score,
         equipment = EXCLUDED.equipment,
         description = EXCLUDED.description,
@@ -33,7 +33,7 @@ with open("./elements_insertion/all_elements.csv", newline="", encoding="utf-8")
         data.append((
             row["type"],
             False,
-            int(row["sportsmen_number"]),
+            int(row["sportsmen_count"]),
             row["code"],
             float(row["score"]),
             row["equipment"],
@@ -45,7 +45,7 @@ with open("./elements_insertion/all_elements.csv", newline="", encoding="utf-8")
     filtered = []
 
     for row in data:
-        code = row[2]
+        code = row[3]
         
         if code is None or code not in seen:
             filtered.append(row)
