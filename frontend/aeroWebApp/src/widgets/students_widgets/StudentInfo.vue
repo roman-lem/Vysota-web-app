@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed, watchEffect } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useForm } from "@/shared/lib/useForm";
 import type { Student } from "@/entities/student/model/student.types";
@@ -28,10 +28,10 @@ const dict: any = {
 };
 
 type StudentKey = keyof Student
-
 const studentKeys = computed(() => {
-  return Object.keys(studentData.value) as StudentKey[];
+	return Object.keys(studentData.value) as StudentKey[];
 });
+console.log(studentKeys)
 
 watchEffect(() => {
 	if(isSuccess.value && !editable.value && student.value){
@@ -80,9 +80,21 @@ async function changeEditMode() {
 						</select>
 					</div>
 					<input
-						v-else
-						:type="key === 'birthDate' ? 'date' : 'text'"
+						v-else-if="key === 'birthDate' && editable"
+						:type="'date'"
 						v-model="studentData[key]"
+						:disabled="!editable"
+					/>
+					<input
+						v-else-if="key === 'birthDate'"
+						:type="'text'"
+						:value="studentData[key].toLocaleDateString()"
+						:disabled="!editable"
+					/>
+					<input
+						v-else
+						:type="'text'"
+						:value="studentData[key]"
 						:disabled="!editable"
 					/>
 				</div>

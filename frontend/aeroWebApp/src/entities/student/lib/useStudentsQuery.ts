@@ -5,7 +5,6 @@ import type { NewStudent } from "../model/student.types";
 
 
 export function useStudentsQuery(filters: any, pagination: any) {
-    console.log(filters.value)
     return useQuery({queryKey: ["students", filters, pagination], queryFn: () => getStudents({...filters.value, ...pagination})})
 }
 

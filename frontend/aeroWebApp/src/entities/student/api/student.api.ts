@@ -19,7 +19,7 @@ async function removeStudent(id: number): Promise<AxiosResponse> {
 
 async function getStudentById(id: number): Promise<Student> {
 	const res: AxiosResponse = await axios.get(`/students/${id}`);
-	return res.data.data as Student
+	return studentMapper(res.data.data)
 }
 
 async function setStudent(data: Student): Promise<AxiosResponse> {

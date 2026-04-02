@@ -23,7 +23,6 @@ function goToTrainer(id: number) {
 
 const trainersData = computed(() => {
 	if (trainers.value) {
-		console.log(trainers.value.data)
 		return trainers.value.data.map((trainer) => [
 			trainer.id,
 			trainer.id,
