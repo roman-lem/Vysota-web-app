@@ -125,7 +125,7 @@ button {
 	cursor: pointer;
 }
 .users-table {
-	margin-top: 50px;
+	margin-top: 10px;
 	background-color: #fff;
 }
 

@@ -18,7 +18,7 @@ class User(db.Model):
         return any(role.name in names for role in self.roles)
     
     def soft_delete(self):
-        self.deleted_at = datetime.utcnow()
+        self.deleted_at = datetime.now(timezone.utc)
     
     def restore(self):
         self.deleted_at = None

@@ -1,5 +1,5 @@
-import { errorHandler } from "@/shared/notifications/providers/errorHandler";
-import type { Student, StudentDto } from "../model/student.types";
+
+import type { NewStudent, Student, StudentDto } from "../model/student.types";
 
 export function studentMapper(dto: StudentDto): Student {
 	const [year, month, day] = dto.birth_date.split("-").map((i) => Number(i));
@@ -22,5 +22,17 @@ export function studentToDto(student: Student): StudentDto{
 		parent_phone: student.parentPhone,
 		level: student.level,
 		birth_date: student.birthDate.toLocaleDateString(),
+	};
+}
+
+export function newStudentToDto(student: NewStudent): StudentDto {
+	console.log("NewStudentDto", student)
+	return {
+		id: -1,
+		name: student.name,
+		parent_name: student.parentName,
+		parent_phone: student.parentPhone,
+		level: student.level,
+		birth_date: new Date(student.birthDate).toLocaleDateString(),
 	};
 }

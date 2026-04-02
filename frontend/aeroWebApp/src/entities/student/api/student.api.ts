@@ -9,7 +9,7 @@ async function getStudents(params: object): Promise<{data: Student[], meta: {tot
 	return {data: res.data.data.map(studentMapper), meta: res.data.meta}
 }
 
-async function addStudent(studentData: NewStudent): Promise<AxiosResponse> {
+async function addStudent(studentData: StudentDto): Promise<AxiosResponse> {
 	return await axios.post("/students", studentData);
 }
 

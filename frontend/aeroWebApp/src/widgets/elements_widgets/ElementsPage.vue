@@ -10,7 +10,7 @@ import { useElementsQuery } from "@/entities/element/lib/useElementsQuery";
 
 const { data: filters } = useForm({ name: "", roles: [] });
 const { total, pages, pagination } = usePagination();
-const debouncedFilters = refDebounced<any>(filters.value, 300)
+const debouncedFilters = refDebounced<any>(filters, 300)
 const {data: elements} = useElementsQuery(debouncedFilters, pagination)
 
 onMounted(async () => {
@@ -124,7 +124,7 @@ button {
 	cursor: pointer;
 }
 .users-table {
-	margin-top: 50px;
+	margin-top: 10px;
 	background-color: #fff;
 }
 

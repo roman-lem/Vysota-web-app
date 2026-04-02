@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/vue-query";
 import { addStudent, getStudents } from "../api/student.api";
-import type { NewStudent } from "../model/student.types";
+import type { StudentDto } from "../model/student.types";
 
 
 
@@ -9,5 +9,5 @@ export function useStudentsQuery(filters: any, pagination: any) {
 }
 
 export function useCreateStudent(){
-    return useMutation({mutationFn: (student: NewStudent) => addStudent(student)})
+    return useMutation({mutationFn: (student: StudentDto) => addStudent(student)})
 }

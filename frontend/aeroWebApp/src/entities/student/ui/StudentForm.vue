@@ -5,13 +5,15 @@ import { v4 as uuid4 } from "uuid";
 import { useCreateStudent } from "../lib/useStudentsQuery";
 import { watch } from "vue";
 import { useQueryClient } from "@tanstack/vue-query";
+import type { NewStudent, StudentDto } from "../model/student.types";
+import { newStudentToDto } from "../lib/mapper";
 
-const { data: form, reset } = useForm({
+const { data: form, reset } = useForm<NewStudent>({
 	name: "",
 	level: "",
-	parent_name: "",
-	parent_phone: "",
-	birth_date: "",
+	parentName: "",
+	parentPhone: "",
+	birthDate: new Date(),
 });
 const addStudent = useCreateStudent();
 const noteStore = useNoteStore();
@@ -31,7 +33,7 @@ async function submit() {
 		});
 		return;
 	}
-	addStudent.mutate(form.value);
+	addStudent.mutate(newStudentToDto(form.value));
 }
 
 watch(addStudent.isSuccess, (newValue, oldValue) => {
@@ -69,7 +71,7 @@ watch(addStudent.isSuccess, (newValue, oldValue) => {
 				<p>Дата рождения</p>
 				<input
 					type="date"
-					v-model="form.birth_date"
+					v-model="form.birthDate"
 					placeholder="Дата рождения"
 					id="birthDate"
 				/>
@@ -85,13 +87,13 @@ watch(addStudent.isSuccess, (newValue, oldValue) => {
 			</div>
 			<input
 				type="text"
-				v-model="form.parent_name"
+				v-model="form.parentName"
 				placeholder="Имя родителя"
 				id="parentName"
 			/>
 			<input
 				type="phone"
-				v-model="form.parent_phone"
+				v-model="form.parentPhone"
 				placeholder="Телефон родителя"
 				id="parentPhone"
 			/>

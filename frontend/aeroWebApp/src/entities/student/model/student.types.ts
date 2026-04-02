@@ -16,4 +16,4 @@ export interface Student {
     birthDate: Date
 }
 
-export interface NewStudent extends Omit<StudentDto, "id">{}
+export interface NewStudent extends Omit<Student, "id">{}
