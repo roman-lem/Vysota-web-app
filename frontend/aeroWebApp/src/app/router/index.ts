@@ -59,6 +59,11 @@ const router = createRouter({
 					name: "adminSelectedStudent",
 					component: StudentInfo,
 				},
+				{
+					path: "elements",
+					name: "adminElements",
+					component: ElementsPage,
+				},
 				{ path: "users", name: "Users", component: TrainersPage },
 				{
 					path: "users/:id",
@@ -71,14 +76,14 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from) => {
-	const pinia = getActivePinia()
-    if (!pinia) {
-        console.error('Pinia not initialized')
-        return
-    }
-  	const store = useUserStore(pinia)
-	const notifications = useNoteStore(pinia)
-	notifications.clear()
+	const pinia = getActivePinia();
+	if (!pinia) {
+		console.error("Pinia not initialized");
+		return;
+	}
+	const store = useUserStore(pinia);
+	const notifications = useNoteStore(pinia);
+	notifications.clear();
 	if (to.matched.some((s) => s.meta.guestOnly)) {
 		if (store.isAuth) {
 			return "/";

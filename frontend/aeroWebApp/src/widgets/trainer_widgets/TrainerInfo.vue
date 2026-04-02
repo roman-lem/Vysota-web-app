@@ -1,22 +1,17 @@
 <script setup lang="ts">
-import { useTrainerStore } from "@/entities/trainer/model/trainer.store";
-import { useTrainers } from "@/features/trainer_management/model/useTrainerManagement";
-import { onMounted, ref } from "vue";
+import { useTrainerQuery } from "@/entities/trainer/lib/useTrainerQuery";
+import { ref } from "vue";
 import { useRoute } from "vue-router";
 
-const { fetchTrainerById } = useTrainers();
-const store = useTrainerStore()
 const route = useRoute();
 const id = Number(route.params.id);
 const editable = ref(false);
+const {data: trainer, isSuccess} = useTrainerQuery(id)
 
-onMounted(() => {
-	fetchTrainerById(id);
-});
 </script>
 
 <template>
-	<div class="selected-user" v-if="store.trainer != null">
+	<div class="selected-user" v-if="trainer">
 		<div class="photo">
 			<img
 				src="/default.jpg"
@@ -25,16 +20,16 @@ onMounted(() => {
 		</div>
 		<div class="data">
 			<div class="data-header">
-				<h2>{{ store.trainer.username }}</h2>
+				<h2>{{ trainer?.username }}</h2>
 				<div class="edit">
 					<img src="/edit.png" alt="Редактировать" />
 				</div>
 			</div>
 			<div class="data-container">
-				<div class="field" v-for="(value, key) in store.trainer">
+				<div class="field" v-for="(value, key) in trainer">
 					<p>{{ key }}</p>
-					<input
-						v-model="store.trainer[key]"
+					<input v-if="trainer && isSuccess"
+						v-model="trainer[key]"
 						:disabled="!editable"
 					/>
 				</div>
