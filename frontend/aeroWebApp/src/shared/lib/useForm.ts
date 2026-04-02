@@ -1,12 +1,12 @@
-import { type Reactive, type Ref, ref } from "vue";
+import { type Ref, shallowRef } from "vue";
 
 interface Form<T> {
-    data: Ref
+    data: Ref<T>
     reset: Function
 }
 
 export function useForm<T>(fields: T): Form<T>{
-    const form = ref<T>(fields)
+    const form = shallowRef<T>(fields)
 
     function reset() {
         Object.keys(form.value).forEach(k => form.value[k] = '')

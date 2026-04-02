@@ -1,46 +1,48 @@
 <script setup lang="ts">
 import ElementsTable from "@/shared/ui/Table.vue";
-import { computed, onMounted, watch, watchEffect } from "vue";
+import SimpleInput from "@/shared/ui/SimpleInput.vue";
+import { computed, onMounted, watchEffect} from "vue";
 import { useForm } from "@/shared/lib/useForm";
-import { debounce } from "vue-debounce";
 import { usePagination } from "@/shared/lib/usePagination";
-import { useElementStore } from "@/entities/element/model/element.store";
+import { refDebounced } from "@vueuse/core"
+import { useElementsQuery } from "@/entities/element/lib/useElementsQuery";
 
-const store = useElementStore()
 
 const { data: filters } = useForm({ name: "", roles: [] });
 const { total, pages, pagination } = usePagination();
+const debouncedFilters = refDebounced<any>(filters.value, 300)
+const {data: elements} = useElementsQuery(debouncedFilters, pagination)
 
 onMounted(async () => {
 	pagination.limit = 10
-	const res = await store.loadElements({ ...filters.value, ...pagination });
-    total.value = res.total
 });
+
+watchEffect(() => {
+	if (elements.value != undefined){
+		total.value = elements.value.meta.total
+	}
+})
 
 function goToPage(page: number) {
 	pagination.page = page;
 }
 
-const elements_data = computed(() => {
-	return store.elements.map((element) => [
-		element.id,
-        element.code,
-		element.type,
-		element.equipment,
-        element.score,
-        element.description,
-	]);
+const elementsData = computed(() => {
+	if (elements.value != undefined){
+		return elements.value.data.map((element) => [
+			element.id,
+			element.code,
+			element.type,
+			element.equipment,
+			element.score,
+			element.description,
+		]);
+	}
+	else {
+		return []
+	}
 });
 
-
-watch(
-	[filters.value, pagination],
-	debounce(async () => {
-		const res = await store.loadElements({ ...filters.value, ...pagination });
-        total.value = res.total
-	}, 300),
-	{ deep: true },
-);
 </script>
 
 <template>
@@ -52,11 +54,12 @@ watch(
 		<div class="elements-int-wrapper">
 			<div class="table">
 				<div class="filters">
+					<simple-input placeholder="Код" type="text"></simple-input>
 				</div>
 				<elements-table
 					:rel_width="[1, 2, 2, 2, 8]"
 					:headers="['Код', 'Категория', 'Снаряд', 'Стоимость', 'Описание']"
-					:data="elements_data"
+					:data="elementsData"
 					class="users-table"
 				></elements-table>
 				<div class="page-number">

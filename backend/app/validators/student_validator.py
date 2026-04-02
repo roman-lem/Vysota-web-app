@@ -75,7 +75,7 @@ def studentSetValidator(**kwargs):
     parent_phone = kwargs['parent_phone']
     if "birth_date" not in kwargs:
         raise ValidationError("birth_date", "", "")
-    birth_date = datetime.datetime.strptime(kwargs['birth_date'], '%Y-%m-%d').date()
+    birth_date = datetime.datetime.strptime(kwargs['birth_date'], '%d.%m.%Y').date()
         
     if not name:
         raise ValidationError("name", name, "")

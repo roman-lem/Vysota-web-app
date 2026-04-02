@@ -1,4 +1,4 @@
-export interface Student {
+export interface StudentDto {
     id: number
     name: string
     level: string
@@ -7,4 +7,13 @@ export interface Student {
     birth_date: string
 }
 
-export interface NewStudent extends Omit<Student, "id">{}
+export interface Student {
+    id: number
+    name: string
+    level: string
+    parentName: string
+    parentPhone: string
+    birthDate: Date
+}
+
+export interface NewStudent extends Omit<StudentDto, "id">{}

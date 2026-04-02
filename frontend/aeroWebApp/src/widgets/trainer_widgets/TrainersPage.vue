@@ -1,52 +1,44 @@
 <script setup lang="ts">
 import TrainersTable from "@/shared/ui/Table.vue";
-import { computed, onMounted, watch, watchEffect } from "vue";
-import { useTrainers } from "@/features/trainer_management/model/useTrainerManagement";
+import { computed, watchEffect } from "vue";
 import { useForm } from "@/shared/lib/useForm";
-import { debounce } from "vue-debounce";
 import { usePagination } from "@/shared/lib/usePagination";
-import { useTrainerStore } from "@/entities/trainer/model/trainer.store";
 import { useRouter } from "vue-router";
-
-const { fetchTrainers, total: numOfTrainers } = useTrainers();
-const store = useTrainerStore();
+import { refDebounced } from "@vueuse/core";
+import { useTrainersQuery } from "@/entities/trainer/lib/useTrainersQuery";
 
 const { data: filters } = useForm({ name: "", roles: [] });
 const { total, pages, pagination } = usePagination();
-
-onMounted(() => {
-	fetchTrainers({ ...filters.value, ...pagination });
-});
+const debouncedFilters = refDebounced(filters, 300)
+const {data: trainers} = useTrainersQuery(debouncedFilters, pagination)
+const router = useRouter();
 
 function goToPage(page: number) {
 	pagination.page = page;
 }
 
 function goToTrainer(id: number) {
-	const router = useRouter();
-	router.push(`/users/${id}`);
+	router.push(`/admin/users/${id}`);
 }
 
-const trainers_data = computed(() => {
-	return store.trainers.map((trainer) => [
-		trainer.id,
-		trainer.id,
-		trainer.username,
-		trainer.roles.join(", "),
-	]);
+const trainersData = computed(() => {
+	if (trainers.value) {
+		return trainers.value.data.map((trainer) => [
+			trainer.id,
+			trainer.id,
+			trainer.username,
+			trainer.roles.join(", "),
+		]);
+	}
+	return []
 });
 
 watchEffect(() => {
-	total.value = numOfTrainers.value;
+	if (trainers.value){
+		total.value = trainers.value.meta.total;
+	}
 });
 
-watch(
-	[filters.value, pagination],
-	debounce(() => {
-		fetchTrainers({ ...filters.value, ...pagination });
-	}, 300),
-	{ deep: true },
-);
 </script>
 
 <template>
@@ -68,7 +60,7 @@ watch(
 					@row_click="goToTrainer"
 					:rel_width="[1, 5, 5]"
 					:headers="['ID', 'Username', 'Roles']"
-					:data="trainers_data"
+					:data="trainersData"
 					class="users-table"
 				></trainers-table>
 				<div class="page-number">

@@ -1,5 +1,9 @@
+<script setup lang="ts">
+const model = defineModel()
+</script>
+
 <template>
-    <input type="text">
+    <input v-model="model" type="text">
 </template>
 
 <style scoped> 
@@ -10,6 +14,6 @@ input{
 	padding: 0 10px;
 	font-size: 18px;
 	font-weight: 400;
-    background-color: #CDDDFE;
+    background-color: #ffffff;
 }
 </style>

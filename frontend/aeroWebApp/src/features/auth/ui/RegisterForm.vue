@@ -97,7 +97,7 @@ async function reg() {
 					/>
 				</svg>
 			</div>
-			<primary-button class="primary-button" @click="reg()">Зарегистрироваться</primary-button>
+			<primary-button class="primary-button" @click="reg">Зарегистрироваться</primary-button>
 		</div>
 		<p>Уже есть аккаунт? <RouterLink to="/auth">Войти</RouterLink></p>
 	</div>

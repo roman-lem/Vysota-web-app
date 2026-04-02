@@ -18,25 +18,20 @@ export function errorHandler(error: unknown) {
 			});
 		} else if (error.response?.status === 400) {
 			let msg = error.response.data.error.description as string;
-			console.log("MSG BEFORE", msg);
 			msg = error.response?.data?.error?.description ?? msg;
 			if (msg.includes("unique")) {
 				msg = "Пользователь с таким никнеймом уже существует";
 			}
-			try {
-				store.createNote({
-					id: uuidv4(),
-					type: "error",
-					message: msg ?? "Проверьте введенные данные",
-					createdAt: Date.now(),
-					persistent: false,
-					source: "api",
-					duration: 8000,
-					dedupeKey: "bad_request",
-				});
-			} catch (e) {
-				console.error("CREATE NOTE ERROR", e);
-			}
+			store.createNote({
+				id: uuidv4(),
+				type: "error",
+				message: msg ?? "Проверьте введенные данные",
+				createdAt: Date.now(),
+				persistent: false,
+				source: "api",
+				duration: 8000,
+				dedupeKey: "bad_request",
+			});
 		} else if (error.response?.status === 404) {
 			store.createNote({
 				id: uuidv4(),
