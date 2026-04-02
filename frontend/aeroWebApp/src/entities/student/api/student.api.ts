@@ -1,11 +1,12 @@
 import { axios } from "@/shared/api/client.api";
 import type { Student, NewStudent } from "../model/student.types";
 import type { AxiosResponse } from "axios";
+import { studentMapper } from "../lib/mapper";
 
 
-async function getStudents(params: object): Promise<[Student[], object]> {
+async function getStudents(params: object): Promise<{data: Student[], meta: {total: number}}> {
 	const res: AxiosResponse = await axios.get("/students", {params});
-	return [res.data.data as Student[], res.data.meta]
+	return {data: res.data.data.map(studentMapper), meta: res.data.meta}
 }
 
 async function addStudent(studentData: NewStudent): Promise<AxiosResponse> {

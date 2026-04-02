@@ -1,54 +1,54 @@
 <script setup lang="ts">
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watchEffect } from "vue";
 import { useRoute } from "vue-router";
-import { useStudents } from "@/features/student_management/model/useStudentManagement";
-import { useStudentStore } from "@/entities/student/model/student.store";
 import { useForm } from "@/shared/lib/useForm";
 import type { Student } from "@/entities/student/model/student.types";
+import { useStudentQuery } from "@/entities/student/lib/useStudentQuery";
 
 const route = useRoute();
-const { fetchStudentById, updateStudent } = useStudents();
 const id = Number(route.params.id);
 const editable = ref(false);
-const store = useStudentStore()
+const {data: student, isSuccess} = useStudentQuery(id)
 const { data: studentData } = useForm<Student>({
 	id: id,
 	name: "",
-	birth_date: "",
+	birthDate: new Date(),
 	level: "",
-	parent_name: "",
-	parent_phone: "",
+	parentName: "",
+	parentPhone: "",
 });
-const dict: Student = {
+
+const dict: any = {
 	id: 0,
 	name: "Имя",
-	birth_date: "Дата рождения",
+	birthDate: "Дата рождения",
 	level: "Разряд",
-	parent_name: "Имя родителя",
-	parent_phone: "Телефон родителя",
+	parentName: "Имя родителя",
+	parentPhone: "Телефон родителя",
 };
+
 type StudentKey = keyof Student
+
 const studentKeys = computed(() => {
   return Object.keys(studentData.value) as StudentKey[];
 });
 
-onMounted(async () => {
-	await fetchStudentById(id);
-	if (!store.student) return
-	Object.assign(studentData.value, store.student)
-});
+watchEffect(() => {
+	if(isSuccess.value && !editable.value && student.value){
+		studentData.value = Object.assign(student.value)
+	}
+})
 
 async function changeEditMode() {
 	if (editable.value && confirm("Сохранить изменения?")) {
-		await updateStudent(studentData.value);
-		await fetchStudentById(id);
+		// There must be mutation
 	}
 	editable.value = !editable.value;
 }
 </script>
 
 <template>
-	<div class="selected-student" v-if="store.student != null">
+	<div class="selected-student" v-if="student != null">
 		<div class="photo">
 			<img
 				src="/default.jpg"
@@ -57,7 +57,7 @@ async function changeEditMode() {
 		</div>
 		<div class="data">
 			<div class="data-header">
-				<h2>{{ store.student.name }}</h2>
+				<h2>{{ student.name }}</h2>
 				<div class="edit" @click="changeEditMode">
 					<img
 						src="/edit.png"
@@ -81,7 +81,7 @@ async function changeEditMode() {
 					</div>
 					<input
 						v-else
-						:type="key === 'birth_date' ? 'date' : 'text'"
+						:type="key === 'birthDate' ? 'date' : 'text'"
 						v-model="studentData[key]"
 						:disabled="!editable"
 					/>

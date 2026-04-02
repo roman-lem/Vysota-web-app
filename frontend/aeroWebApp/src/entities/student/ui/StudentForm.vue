@@ -1,22 +1,23 @@
 <script setup lang="ts">
 import { useForm } from "@/shared/lib/useForm";
-import { useStudents } from "@/features/student_management/model/useStudentManagement";
 import { useNoteStore } from "@/shared/notifications/store/notifications.store";
 import { v4 as uuid4 } from "uuid";
+import { useCreateStudent } from "../lib/useStudentsQuery";
+import { watch } from "vue";
+import { useQueryClient } from "@tanstack/vue-query";
 
-const emit = defineEmits(["submit"])
-const {createStudent} = useStudents()
-
-const {data: form, reset} = useForm({
+const { data: form, reset } = useForm({
 	name: "",
 	level: "",
 	parent_name: "",
 	parent_phone: "",
 	birth_date: "",
-})
+});
+const addStudent = useCreateStudent();
+const noteStore = useNoteStore();
+const client = useQueryClient()
 
 async function submit() {
-	const noteStore = useNoteStore()
 	if (Object.values(form.value).includes("")) {
 		noteStore.createNote({
 			id: uuid4(),
@@ -26,13 +27,16 @@ async function submit() {
 			duration: 4000,
 			persistent: false,
 			source: "ui",
-			dedupeKey: "empty_form"
-		})
+			dedupeKey: "empty_form",
+		});
 		return;
 	}
+	addStudent.mutate(form.value);
+}
 
-	await createStudent(form.value)
-	noteStore.createNote({
+watch(addStudent.isSuccess, (newValue, oldValue) => {
+	if (!oldValue && newValue) {
+		noteStore.createNote({
 			id: uuid4(),
 			message: "Ученик успешно добавлен",
 			createdAt: Date.now(),
@@ -40,11 +44,12 @@ async function submit() {
 			duration: 2000,
 			persistent: false,
 			source: "ui",
-			dedupeKey: "empty_form"
-		})
-    reset()
-	emit("submit")
-}
+			dedupeKey: "empty_form",
+		});
+		client.invalidateQueries({queryKey: ["students"]})
+		reset();
+	}
+});
 </script>
 
 <template>
@@ -69,15 +74,15 @@ async function submit() {
 					id="birthDate"
 				/>
 			</div>
-            <div class="date">
-                <p>Уровень</p>
-                <select v-model="form.level" name="level" id="level">
-                    <option value="Начинающий">Начинающий</option>
-                    <option value="Продолжающий">Продолжающий</option>
-                    <option value="КМС">КМС</option>
-                    <option value="МС">МС</option>
-                </select>
-            </div>
+			<div class="date">
+				<p>Уровень</p>
+				<select v-model="form.level" name="level" id="level">
+					<option value="Начинающий">Начинающий</option>
+					<option value="Продолжающий">Продолжающий</option>
+					<option value="КМС">КМС</option>
+					<option value="МС">МС</option>
+				</select>
+			</div>
 			<input
 				type="text"
 				v-model="form.parent_name"
@@ -125,7 +130,8 @@ h3 {
 	width: 80%;
 	box-sizing: border-box;
 }
-.form input, select {
+.form input,
+select {
 	opacity: 0.8;
 	border: none;
 	width: 100%;
@@ -139,7 +145,7 @@ h3 {
 	border: none;
 }
 .date p {
-    margin-top: 0;
+	margin-top: 0;
 	margin-bottom: 5px;
 	font-family: "Manrope", sans-serif;
 	color: #888;

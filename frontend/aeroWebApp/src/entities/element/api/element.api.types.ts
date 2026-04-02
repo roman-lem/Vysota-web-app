@@ -1,7 +1,7 @@
-import type { Element } from "../model/element.types"
+import type { ElementDto } from "../model/element.types"
 
 export interface ElementResponse {
     message:string
-    data: Element[]
+    data: ElementDto[]
     meta: object
 }

@@ -10,6 +10,6 @@ input{
 	padding: 0 10px;
 	font-size: 18px;
 	font-weight: 400;
-    background-color: #CDDDFE;
+    background-color: #ffffff;
 }
 </style>

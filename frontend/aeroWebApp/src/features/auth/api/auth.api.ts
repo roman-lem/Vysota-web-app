@@ -61,7 +61,6 @@ async function initAuth() {
 			.then((response) => {
 				store.user = response;
 				store.isAdminAuth = false;
-				console.log("initAuth set:", store.isAdminAuth);
 			})
 			.catch((e) => {
 				logout();

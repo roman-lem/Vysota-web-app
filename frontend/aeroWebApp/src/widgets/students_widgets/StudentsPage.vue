@@ -1,56 +1,42 @@
 <script setup lang="ts">
 import StudentForm from "@/entities/student/ui/StudentForm.vue";
 import StudentsTable from "@/shared/ui/Table.vue";
-import { onMounted, watchEffect, watch, computed } from "vue";
+import { watchEffect, computed, type Ref } from "vue";
 import { useRouter } from "vue-router";
-import { useStudents } from "@/features/student_management/model/useStudentManagement";
 import { useForm } from "@/shared/lib/useForm";
-import { debounce } from "vue-debounce";
 import { usePagination } from "@/shared/lib/usePagination";
-import { useStudentStore } from "@/entities/student/model/student.store";
-
-const { fetchStudents, total: numOfStudents } = useStudents();
-const store = useStudentStore();
+import { useStudentsQuery } from "@/entities/student/lib/useStudentsQuery";
+import { refDebounced } from "@vueuse/core";
 
 const { data: filters } = useForm({ name: "", level: "" });
 const { total, pages, pagination } = usePagination();
-
-onMounted(async () => {
-	await fetchStudents({ ...filters.value, ...pagination });
-});
-
+const debouncedFilter = refDebounced<any>(filters, 300);
+const { data: students } = useStudentsQuery(debouncedFilter, pagination);
+const router = useRouter();
 function goToPage(page: number) {
 	pagination.page = page;
 }
 
 function goToStudent(id: number) {
-	const router = useRouter()
 	router.push(`/students/${id}`);
 }
 
 watchEffect(() => {
-	total.value = numOfStudents.value;
+	if (students.value) {
+		total.value = students.value.meta.total;
+	}
 });
 
-watch(
-	[filters.value, pagination],
-	debounce(() => {
-		fetchStudents({ ...filters.value, ...pagination });
-	}, 300),
-	{ deep: true },
-);
-
-function refreshTable() {
-	fetchStudents({ ...filters.value, ...pagination });
-}
-
-const students_data = computed(() => {
-	return store.students.map((student) => [
-		student.id,
-		student.name,
-		student.birth_date,
-		student.level,
-	]);
+const studentsData = computed(() => {
+	if (students.value) {
+		return students.value.data.map((student) => [
+			student.id,
+			student.name,
+			student.birthDate.toLocaleDateString(),
+			student.level,
+		]);
+	}
+	return [];
 });
 </script>
 
@@ -80,7 +66,7 @@ const students_data = computed(() => {
 					:rel_width="[2, 1, 1]"
 					@row_click="goToStudent"
 					:headers="['Имя', 'Дата рождения', 'Разряд']"
-					:data="students_data"
+					:data="studentsData"
 					class="student-table"
 				></students-table>
 				<div class="page-number">
@@ -95,7 +81,7 @@ const students_data = computed(() => {
 					</div>
 				</div>
 			</div>
-			<student-form @submit="refreshTable"></student-form>
+			<student-form></student-form>
 		</div>
 	</div>
 </template>
