@@ -1,9 +1,13 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect } from "vue";
+import { ref, computed, watchEffect, watch } from "vue";
 import { useRoute } from "vue-router";
 import { useForm } from "@/shared/lib/useForm";
 import type { Student } from "@/entities/student/model/student.types";
-import { useStudentQuery } from "@/entities/student/lib/useStudentQuery";
+import { useEditStudent, useStudentQuery } from "@/entities/student/lib/useStudentQuery";
+import { useQueryClient } from "@tanstack/vue-query";
+import { useNoteStore } from "@/shared/notifications/store/notifications.store";
+import { v4 as uuid4 } from "uuid";
+import { studentToDto } from "@/entities/student/lib/mapper";
 
 const route = useRoute();
 const id = Number(route.params.id);
@@ -17,6 +21,9 @@ const { data: studentData } = useForm<Student>({
 	parentName: "",
 	parentPhone: "",
 });
+const editStudent = useEditStudent()
+const client = useQueryClient()
+const noteStore = useNoteStore()
 
 const dict: any = {
 	id: 0,
@@ -31,20 +38,37 @@ type StudentKey = keyof Student
 const studentKeys = computed(() => {
 	return Object.keys(studentData.value) as StudentKey[];
 });
-console.log(studentKeys)
 
-watchEffect(() => {
+watch([isSuccess], () => {
 	if(isSuccess.value && !editable.value && student.value){
-		studentData.value = Object.assign(student.value)
+			studentData.value = { ...student.value }
 	}
 })
 
 async function changeEditMode() {
 	if (editable.value && confirm("Сохранить изменения?")) {
-		// There must be mutation
+		editStudent.mutate(studentToDto(studentData.value))
 	}
 	editable.value = !editable.value;
 }
+
+watch(editStudent.isSuccess, (newValue, oldValue) => {
+	if (!oldValue && newValue) {
+		noteStore.createNote({
+			id: uuid4(),
+			message: "Ученик успешно обновлен",
+			createdAt: Date.now(),
+			type: "success",
+			duration: 2000,
+			persistent: false,
+			source: "ui",
+			dedupeKey: "empty_form",
+		});
+		client.invalidateQueries({queryKey: ["student"]})
+	}
+});
+
+
 </script>
 
 <template>

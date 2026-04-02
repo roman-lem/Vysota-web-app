@@ -121,10 +121,7 @@ def setStudent(user, ident, **kwargs):
             'meta': {}}, 404
     
     for key in kwargs.keys():
-        print("key", key)
-        print("value", kwargs[key])
         setattr(student, key, kwargs[key])
-    print(getattr(student, "name"))
     
     db.session.commit()
     return {'message': 'Student updated',

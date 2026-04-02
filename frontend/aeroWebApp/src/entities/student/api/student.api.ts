@@ -1,5 +1,5 @@
 import { axios } from "@/shared/api/client.api";
-import type { Student, NewStudent } from "../model/student.types";
+import type { Student, NewStudent, StudentDto } from "../model/student.types";
 import type { AxiosResponse } from "axios";
 import { studentMapper } from "../lib/mapper";
 
@@ -22,7 +22,7 @@ async function getStudentById(id: number): Promise<Student> {
 	return studentMapper(res.data.data)
 }
 
-async function setStudent(data: Student): Promise<AxiosResponse> {
+async function setStudent(data: StudentDto): Promise<AxiosResponse> {
 	return await axios.patch(`/students/${data.id}`, data)
 }
 

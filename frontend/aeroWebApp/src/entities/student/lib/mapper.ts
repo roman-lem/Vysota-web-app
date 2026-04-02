@@ -12,3 +12,15 @@ export function studentMapper(dto: StudentDto): Student {
 		birthDate: new Date(year!, month! - 1, day!),
 	};
 }
+
+
+export function studentToDto(student: Student): StudentDto{
+	return {
+		id: student.id,
+		name: student.name,
+		parent_name: student.parentName,
+		parent_phone: student.parentPhone,
+		level: student.level,
+		birth_date: student.birthDate.toLocaleDateString(),
+	};
+}
