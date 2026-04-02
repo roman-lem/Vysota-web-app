@@ -1,6 +1,7 @@
 
 import type { NewStudent, Student, StudentDto } from "../model/student.types";
 
+
 export function studentMapper(dto: StudentDto): Student {
 	const [year, month, day] = dto.birth_date.split("-").map((i) => Number(i));
 	return {
@@ -13,7 +14,6 @@ export function studentMapper(dto: StudentDto): Student {
 	};
 }
 
-
 export function studentToDto(student: Student): StudentDto{
 	return {
 		id: student.id,
@@ -24,6 +24,7 @@ export function studentToDto(student: Student): StudentDto{
 		birth_date: student.birthDate.toLocaleDateString(),
 	};
 }
+
 
 export function newStudentToDto(student: NewStudent): StudentDto {
 	console.log("NewStudentDto", student)

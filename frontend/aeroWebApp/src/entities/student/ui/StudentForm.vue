@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import LevelSelect from "@/shared/ui/LevelSelect.vue";
 import { useForm } from "@/shared/lib/useForm";
 import { useNoteStore } from "@/shared/notifications/store/notifications.store";
 import { v4 as uuid4 } from "uuid";
@@ -78,12 +79,7 @@ watch(addStudent.isSuccess, (newValue, oldValue) => {
 			</div>
 			<div class="date">
 				<p>Уровень</p>
-				<select v-model="form.level" name="level" id="level">
-					<option value="Начинающий">Начинающий</option>
-					<option value="Продолжающий">Продолжающий</option>
-					<option value="КМС">КМС</option>
-					<option value="МС">МС</option>
-				</select>
+				<level-select v-model="form.level"></level-select>
 			</div>
 			<input
 				type="text"
@@ -132,8 +128,7 @@ h3 {
 	width: 80%;
 	box-sizing: border-box;
 }
-.form input,
-select {
+.form input{
 	opacity: 0.8;
 	border: none;
 	width: 100%;

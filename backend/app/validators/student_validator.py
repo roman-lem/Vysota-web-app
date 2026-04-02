@@ -39,7 +39,7 @@ def studentGetValidator(**kwargs):
         
     if "level" in kwargs:
         level = kwargs["level"]
-        if level.upper() not in ["НАЧИНАЮЩИЙ", "ПРОДОЛЖАЮЩИЙ", "КМС", "МС", ""]:
+        if level.upper() not in ["WITHOUT", "3JUN", "2JUN", "1JUN", "3SPORT", "2SPORT", "1SPORT", "CMS", ""]:
             raise ValidationError("level", kwargs["level"], "in list")
         if level == "":
             level =None
@@ -89,7 +89,7 @@ def studentSetValidator(**kwargs):
     if len(parent_name) > 100:
         raise ValidationError("parent_name", parent_name, "< 100 symbols")
         
-    if  level.upper() not in ["НАЧИНАЮЩИЙ", "ПРОДОЛЖАЮЩИЙ", "КМС", "МС"]:
+    if  level.upper() not in ["WITHOUT", "3JUN", "2JUN", "1JUN", "3SPORT", "2SPORT", "1SPORT", "CMS"]:
         raise ValidationError("level", level, "in list")
         
     if not parent_phone:

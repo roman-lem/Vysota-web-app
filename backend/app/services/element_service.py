@@ -7,7 +7,7 @@ def fetchElements(user, **kwargs):
     limit = int(kwargs['limit'])
     code = kwargs["code"]
     
-    user_elements = Element.query.order_by(Element.id)
+    user_elements = user.elements
     if not user.hasRole('owner', 'admin'):
         user_elements = user.elements
 

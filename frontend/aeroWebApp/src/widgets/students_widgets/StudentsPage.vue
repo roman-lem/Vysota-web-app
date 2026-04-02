@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import StudentForm from "@/entities/student/ui/StudentForm.vue";
 import StudentsTable from "@/shared/ui/Table.vue";
+import LevelSelect from "@/shared/ui/LevelSelect.vue";
+import { Levels } from "@/shared/lib/levels";
 import { watchEffect, computed, type Ref } from "vue";
 import { useRouter } from "vue-router";
 import { useForm } from "@/shared/lib/useForm";
@@ -27,13 +29,14 @@ watchEffect(() => {
 	}
 });
 
+
 const studentsData = computed(() => {
 	if (students.value) {
 		return students.value.data.map((student) => [
 			student.id,
 			student.name,
 			student.birthDate.toLocaleDateString(),
-			student.level,
+			Levels[student.level as keyof typeof Levels],
 		]);
 	}
 	return [];
@@ -54,13 +57,7 @@ const studentsData = computed(() => {
 						placeholder="Поиск по имени"
 						v-model="filters.name"
 					/>
-					<select v-model="filters.level" name="level" id="level">
-						<option value="">Любой уровень</option>
-						<option value="Начинающий">Начинающий</option>
-						<option value="Продолжающий">Продолжающий</option>
-						<option value="КМС">КМС</option>
-						<option value="МС">МС</option>
-					</select>
+					<level-select v-model="filters.level"></level-select>
 				</div>
 				<students-table
 					:rel_width="[2, 1, 1]"

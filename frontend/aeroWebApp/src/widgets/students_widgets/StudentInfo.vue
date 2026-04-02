@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, watchEffect, watch } from "vue";
+import LevelSelect from "@/shared/ui/LevelSelect.vue";
+import { Levels } from "@/shared/lib/levels";
+import { ref, computed, watchEffect, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useForm } from "@/shared/lib/useForm";
 import type { Student } from "@/entities/student/model/student.types";
@@ -25,6 +27,7 @@ const editStudent = useEditStudent()
 const client = useQueryClient()
 const noteStore = useNoteStore()
 
+
 const dict: any = {
 	id: 0,
 	name: "Имя",
@@ -39,7 +42,7 @@ const studentKeys = computed(() => {
 	return Object.keys(studentData.value) as StudentKey[];
 });
 
-watch([isSuccess], () => {
+watchEffect(() => {
 	if(isSuccess.value && !editable.value && student.value){
 			studentData.value = { ...student.value }
 	}
@@ -93,15 +96,10 @@ watch(editStudent.isSuccess, (newValue, oldValue) => {
 				<div
 					class="field"
 					v-for="key in studentKeys"
-					:style="{ display: key === 'id' ? 'none' : 'block' }" >
+					:style="{ display: key === 'id' ? 'none' : 'block' }" :key="key">
 					<p>{{ dict[key] }}</p>
-					<div class="level-data" v-if="key == 'level' && editable">
-						<select v-model="studentData[key]" name="level" id="level" :disabled="!editable">
-							<option value="Начинающий">Начинающий</option>
-							<option value="Продолжающий">Продолжающий</option>
-							<option value="КМС">КМС</option>
-							<option value="МС">МС</option>
-						</select>
+					<div v-if="key == 'level' && editable">
+						<level-select class="input" v-model="studentData.level"></level-select>
 					</div>
 					<input
 						v-else-if="key === 'birthDate' && editable"
@@ -113,6 +111,12 @@ watch(editStudent.isSuccess, (newValue, oldValue) => {
 						v-else-if="key === 'birthDate'"
 						:type="'text'"
 						:value="studentData[key].toLocaleDateString()"
+						:disabled="!editable"
+					/>
+					<input
+						v-else-if="key === 'level'"
+						:type="'text'"
+						:value="Levels[studentData[key] as keyof typeof Levels]"
 						:disabled="!editable"
 					/>
 					<input
@@ -145,13 +149,15 @@ watch(editStudent.isSuccess, (newValue, oldValue) => {
 	gap: 20px;
 	height: 300px;
 }
-input, select {
+input, .input{
 	height: 50px;
+	width: 200px;
 	border: none;
 	background-color: #ffffff00;
 	font-size: 25px;
 	font-weight: normal;
 	color: var(--text-color);
+	font-family: "Manrope", sans-serif;
 }
 .photo {
 	width: 300px;
