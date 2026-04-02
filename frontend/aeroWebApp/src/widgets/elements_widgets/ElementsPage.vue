@@ -8,10 +8,11 @@ import { refDebounced } from "@vueuse/core"
 import { useElementsQuery } from "@/entities/element/lib/useElementsQuery";
 
 
-const { data: filters } = useForm({ name: "", roles: [] });
+const { data: filters } = useForm({ code: "" });
 const { total, pages, pagination } = usePagination();
 const debouncedFilters = refDebounced<any>(filters, 300)
 const {data: elements} = useElementsQuery(debouncedFilters, pagination)
+
 
 onMounted(async () => {
 	pagination.limit = 10
@@ -33,6 +34,7 @@ const elementsData = computed(() => {
 			element.id,
 			element.code,
 			element.type,
+			element.sportsmenCount,
 			element.equipment,
 			element.score,
 			element.description,
@@ -54,11 +56,11 @@ const elementsData = computed(() => {
 		<div class="elements-int-wrapper">
 			<div class="table">
 				<div class="filters">
-					<simple-input placeholder="Код" type="text"></simple-input>
+					<simple-input v-model="filters.code" placeholder="Код" type="text"></simple-input>
 				</div>
 				<elements-table
-					:rel_width="[1, 2, 2, 2, 8]"
-					:headers="['Код', 'Категория', 'Снаряд', 'Стоимость', 'Описание']"
+					:rel_width="[1, 1.5, 2, 2, 2, 8]"
+					:headers="['Код', 'Категория', 'Кол-во спортсменов', 'Снаряд', 'Стоимость', 'Описание']"
 					:data="elementsData"
 					class="users-table"
 				></elements-table>

@@ -1,5 +1,5 @@
 from app.errors import ValidationError
-import datetime
+
 
 
 def elementGetValidator(**kwargs):
@@ -33,4 +33,5 @@ def elementGetValidator(**kwargs):
             raise ValidationError(f"kwargs[{key}]", kwargs[key], "non nullable")
     
     return {"page": page, 
-            "limit": limit}
+            "limit": limit,
+            "code": kwargs["code"]}

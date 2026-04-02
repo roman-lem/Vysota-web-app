@@ -1,12 +1,12 @@
-import { type Ref, shallowRef } from "vue";
+import { type Ref, shallowRef, ref } from "vue";
 
 interface Form<T> {
-    data: Ref<T>
+    data: any
     reset: Function
 }
 
 export function useForm<T>(fields: T): Form<T>{
-    const form = shallowRef<T>(fields)
+    const form = ref<T>(fields)
 
     function reset() {
         Object.keys(form.value).forEach(k => form.value[k] = '')

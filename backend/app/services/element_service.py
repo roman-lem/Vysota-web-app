@@ -5,12 +5,20 @@ from app.errors import UnauthorizedError, ForbiddenError
 def fetchElements(user, **kwargs):
     page = int(kwargs['page'])
     limit = int(kwargs['limit'])
+    code = kwargs["code"]
     
     user_elements = Element.query.order_by(Element.id)
     if not user.hasRole('owner', 'admin'):
         user_elements = user.elements
 
     common_elements = Element.query.filter(Element.is_custom == False)
+
+    weakFilters = {"code"}
+    for key in weakFilters:
+        if kwargs.get(key) is not None:
+            column = getattr(Element, key)
+            value = kwargs[key]
+            common_elements = common_elements.filter(column.ilike(f"%{value}%"))
 
     elements = user_elements.union_all(common_elements)
     
