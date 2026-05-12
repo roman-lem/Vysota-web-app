@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import LevelSelect from "@/shared/ui/LevelSelect.vue";
-import { Levels } from "@/shared/lib/levels";
 import { ref, computed, watchEffect, watch, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import { useForm } from "@/shared/lib/useForm";
@@ -10,6 +9,7 @@ import { useQueryClient } from "@tanstack/vue-query";
 import { useNoteStore } from "@/shared/notifications/store/notifications.store";
 import { v4 as uuid4 } from "uuid";
 import { studentToDto } from "@/entities/student/lib/mapper";
+import SimpleInput from "@/shared/ui/SimpleInput.vue"
 
 const route = useRoute();
 const id = Number(route.params.id);
@@ -18,7 +18,7 @@ const {data: student, isSuccess} = useStudentQuery(id)
 const { data: studentData } = useForm<Student>({
 	id: id,
 	name: "",
-	birthDate: new Date(),
+	birthDate: "",
 	level: "",
 	parentName: "",
 	parentPhone: "",
@@ -36,11 +36,6 @@ const dict: any = {
 	parentName: "Имя родителя",
 	parentPhone: "Телефон родителя",
 };
-
-type StudentKey = keyof Student
-const studentKeys = computed(() => {
-	return Object.keys(studentData.value) as StudentKey[];
-});
 
 watchEffect(() => {
 	if(isSuccess.value && !editable.value && student.value){
@@ -93,38 +88,25 @@ watch(editStudent.isSuccess, (newValue, oldValue) => {
 				</div>
 			</div>
 			<div class="data-container">
-				<div
-					class="field"
-					v-for="key in studentKeys"
-					:style="{ display: key === 'id' ? 'none' : 'block' }" :key="key">
-					<p>{{ dict[key] }}</p>
-					<div v-if="key == 'level' && editable">
-						<level-select class="input" v-model="studentData.level"></level-select>
-					</div>
-					<input
-						v-else-if="key === 'birthDate' && editable"
-						:type="'date'"
-						v-model="studentData[key]"
-						:disabled="!editable"
-					/>
-					<input
-						v-else-if="key === 'birthDate'"
-						:type="'text'"
-						:value="studentData[key].toLocaleDateString()"
-						:disabled="!editable"
-					/>
-					<input
-						v-else-if="key === 'level'"
-						:type="'text'"
-						:value="Levels[studentData[key] as keyof typeof Levels]"
-						:disabled="!editable"
-					/>
-					<input
-						v-else
-						:type="'text'"
-						:value="studentData[key]"
-						:disabled="!editable"
-					/>
+				<div class="field">
+					<p>Имя ученика</p>
+					<simple-input class="input" type="text" v-model="studentData.name" :disabled="!editable" :className="editable ? 'editable': ''"></simple-input>
+				</div>
+				<div class="field">
+					<p>Дата рождения</p>
+					<simple-input class="input" type="date" v-model="studentData.birthDate" :disabled="!editable" :className="editable ? 'editable': ''"></simple-input>
+				</div>
+				<div class="field">
+					<p>Разряд</p>
+					<level-select class="input" v-model="studentData.level" :disabled="!editable" :className="editable ? 'editable': ''"></level-select>
+				</div>
+				<div class="field">
+					<p>Имя родителя</p>
+					<simple-input class="input" type="text" v-model="studentData.parentName" :disabled="!editable" :className="editable ? 'editable': ''"></simple-input>
+				</div>
+				<div class="field">
+					<p>Телефон родителя</p>
+					<simple-input class="input" type="text" v-model="studentData.parentPhone" :disabled="!editable" :className="editable ? 'editable': ''"></simple-input>
 				</div>
 			</div>
 		</div>
@@ -147,17 +129,19 @@ watch(editStudent.isSuccess, (newValue, oldValue) => {
 	flex-direction: column;
 	flex-wrap: wrap;
 	gap: 20px;
-	height: 300px;
+	height: 500px;
 }
-input, .input{
+input, select{
 	height: 50px;
-	width: 200px;
-	border: none;
+	width: 70%;
 	background-color: #ffffff00;
 	font-size: 25px;
 	font-weight: normal;
 	color: var(--text-color);
 	font-family: "Manrope", sans-serif;
+}
+.editable {
+	background-color: #ffffffb0;
 }
 .photo {
 	width: 300px;
@@ -180,13 +164,19 @@ h2 {
 .data {
 	display: flex;
 	flex-direction: column;
-	gap: 20px;
+	gap: 40px;
 }
 
 .data-header {
 	display: flex;
 	gap: 20px;
 	align-items: center;
+}
+
+.field p{
+	margin-left: 10px;
+	font-size: 18px;
+	opacity: 0.8;
 }
 
 .edit {

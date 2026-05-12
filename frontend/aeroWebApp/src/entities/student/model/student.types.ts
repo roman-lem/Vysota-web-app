@@ -13,7 +13,7 @@ export interface Student {
     level: string
     parentName: string
     parentPhone: string
-    birthDate: Date
+    birthDate: string
 }
 
 export interface NewStudent extends Omit<Student, "id">{}

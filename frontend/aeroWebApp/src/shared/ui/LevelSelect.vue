@@ -3,7 +3,7 @@ const model = defineModel()
 </script>
 
 <template>
-	<select v-model="model" name="level" id="level">
+	<select v-model="model" name="level">
 		<option value="" selected>Любой уровень</option>
 		<option value="without">Без разряда</option>
 		<option value="3jun">3 юношеский</option>
@@ -18,12 +18,13 @@ const model = defineModel()
 
 <style scoped>
 select {
-	opacity: 0.8;
-	border: none;
-	width: 100%;
 	height: 40px;
 	border-radius: 5px;
+	border: none;
 	padding: 0 10px;
-	box-sizing: border-box;
+	font-size: 18px;
+	font-weight: 400;
+    background-color: #ffffff;
+	color: black !important;
 }
 </style>
