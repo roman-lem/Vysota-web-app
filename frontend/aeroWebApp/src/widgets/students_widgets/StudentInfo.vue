@@ -43,6 +43,7 @@ const studentKeys = computed(() => {
 });
 
 watchEffect(() => {
+	console.log(studentData.value.birthDate)
 	if(isSuccess.value && !editable.value && student.value){
 			studentData.value = { ...student.value }
 	}
@@ -104,7 +105,7 @@ watch(editStudent.isSuccess, (newValue, oldValue) => {
 					<input
 						v-else-if="key === 'birthDate' && editable"
 						:type="'date'"
-						v-model="studentData[key]"
+						v-model="studentData.birthDate"
 						:disabled="!editable"
 					/>
 					<input

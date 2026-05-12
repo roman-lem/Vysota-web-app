@@ -3,6 +3,7 @@ from app.extensions import db
 class Element(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     is_custom = db.Column(db.Boolean, default=False)
+    category = db.Column(db.String(20), nullable = True)
     type = db.Column(db.String(50), nullable = False)
     sportsmen_number = db.Column(db.Integer, nullable = False)
     equipment = db.Column(db.String(50), nullable = False)
