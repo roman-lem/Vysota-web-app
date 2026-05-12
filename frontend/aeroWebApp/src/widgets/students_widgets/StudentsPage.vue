@@ -35,7 +35,7 @@ const studentsData = computed(() => {
 		return students.value.data.map((student) => [
 			student.id,
 			student.name,
-			student.birthDate.toLocaleDateString(),
+			student.birthDate,
 			Levels[student.level as keyof typeof Levels],
 		]);
 	}
